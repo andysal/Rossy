@@ -1,8 +1,13 @@
 ﻿using Microsoft.Azure.CognitiveServices.Language.LUIS.Runtime;
 using Microsoft.Azure.CognitiveServices.Language.LUIS.Runtime.Models;
+using Microsoft.Azure.CognitiveServices.Language.TextAnalytics;
+using Microsoft.Rest;
 using System;
 using System.Collections.Generic;
+using System.Net.Http;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Rossy
 {
@@ -10,9 +15,10 @@ namespace Rossy
     {
         public class Configuration
         {
+            public string TextAnalysisEndpoint { get; set; }
+            public string TextAnalysisSubscriptionKey { get; set; }
             public string Endpoint { get; set; }
             public string PredictionKey { get; set; }
-
             public string AppIdEN { get; set; }
             public string AppIdIT { get; set; }
         }
@@ -30,29 +36,28 @@ namespace Rossy
             return prediction.Prediction.TopIntent;
         }
 
-        private LUISRuntimeClient CreateClient()
-        {
-            var credentials = new ApiKeyServiceClientCredentials(Config.PredictionKey);
-            var luisClient = new LUISRuntimeClient(credentials, new System.Net.Http.DelegatingHandler[] { })
-            {
-                Endpoint = Config.Endpoint
-            };
-
-            return luisClient;
-        }
-
         private string GuessLanguage(string utterance)
         {
-            return "en-US";
+            var credentials = new ApiKeyServiceClientCredentials(Config.TextAnalysisSubscriptionKey);
+            
+            TextAnalyticsClient client = new TextAnalyticsClient(credentials)
+            {
+                Endpoint = Config.TextAnalysisEndpoint
+            };
+            var result = client.DetectLanguage(utterance, "");
+            if(result.DetectedLanguages==null || result.DetectedLanguages.Count == 0)
+                return "en";
+            else
+                return result.DetectedLanguages[0].Iso6391Name;
         }
 
         private string GetAppId(string language)
         {
             switch(language)
             {
-                case "it-IT":
+                case "it":
                     return Config.AppIdIT;
-                case "en-US":
+                case "en":
                 default:
                     return Config.AppIdEN;
             }
@@ -62,9 +67,12 @@ namespace Rossy
         {
             var language = GuessLanguage(utterance);
             var appId = GetAppId(language);
-            using (var luisClient = CreateClient())
+            var credentials = new ApiKeyServiceClientCredentials(Config.PredictionKey);
+            using (var luisClient = new LUISRuntimeClient(credentials, new System.Net.Http.DelegatingHandler[] { })
+                                            {
+                                                Endpoint = Config.Endpoint
+                                            })
             {
-
                 var requestOptions = new PredictionRequestOptions
                 {
                     DatetimeReference = DateTime.Now, //DateTime.Parse("2019-01-01"),
