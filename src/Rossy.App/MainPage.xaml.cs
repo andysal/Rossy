@@ -43,24 +43,31 @@ namespace Rossy.App
         private async void btnAnalyze_Click(object sender, RoutedEventArgs e)
         {
             var config = new AppConfig();
-            string utterance = txtUtterance.Text;
 
             string blobUrl;
-            if (string.IsNullOrWhiteSpace(txtFilePath.Text))
+            if(!string.IsNullOrWhiteSpace(txtFilePath.Text))
+            {
+                blobUrl = txtFilePath.Text;
+            }
+            else
             {
                 CameraCaptureUI dialog = new CameraCaptureUI();
                 StorageFile file = await dialog.CaptureFileAsync(CameraCaptureUIMode.Photo);
                 blobUrl = await UploadPicture(file);
             }
+
+            string utterance;
+            if(!string.IsNullOrWhiteSpace(txtUtterance.Text))
+                utterance= txtUtterance.Text;
             else
             {
-                blobUrl = txtFilePath.Text;
+                utterance = "what's up?";
             }
 
             var rosetta = new Rosetta(config.RosettaConfig);
             var intent = rosetta.GuessIntent(utterance);
             var analyzer = new Sherlock(config.SherlockConfig);
-            var response = string.Empty;
+            string response;
             switch (intent)
             {
                 case "People":
