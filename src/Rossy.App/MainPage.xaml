@@ -9,9 +9,14 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid>
-        <TextBox Name="txtFilePath" HorizontalAlignment="Left" Margin="47,57,0,0" Text="TextBox" TextWrapping="Wrap" VerticalAlignment="Top" Width="1361"/>
-        <TextBox Name="txtUtterance" HorizontalAlignment="Left" Margin="47,107,0,0" Text="TextBox" TextWrapping="Wrap" VerticalAlignment="Top" Width="1361"/>
-        <Button Name="btnAnalyze" Content="Button" Margin="81,176,0,0" VerticalAlignment="Top" Click="btnAnalyze_Click"/>
-
+        <StackPanel Orientation="Vertical">
+            <StackPanel Orientation="Horizontal">
+                <TextBox Name="txtFilePath" HorizontalAlignment="Left" Text="TextBox" TextWrapping="Wrap" VerticalAlignment="Top" Width="500" />
+                <Button Name="btnPickFile" Content="Pick" VerticalAlignment="Top" Click="btnPickFile_Click" />
+                <Button Name="btnTakePicture" Content="Take" VerticalAlignment="Top" Click="btnTakePicture_Click" />
+            </StackPanel>
+            <TextBox Name="txtUtterance" HorizontalAlignment="Left" Text="TextBox" TextWrapping="Wrap" VerticalAlignment="Top" Width="500" />
+            <Button Name="btnAnalyze" Content="Analyze" VerticalAlignment="Top" Click="btnAnalyze_Click"/>
+        </StackPanel>
     </Grid>
 </Page>
