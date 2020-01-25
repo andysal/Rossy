@@ -17,6 +17,7 @@
             </StackPanel>
             <TextBox Name="txtUtterance" HorizontalAlignment="Left" Text="TextBox" TextWrapping="Wrap" VerticalAlignment="Top" Width="500" />
             <Button Name="btnAnalyze" Content="Analyze" VerticalAlignment="Top" Click="btnAnalyze_Click"/>
+            <TextBlock Name="txtAnalysisResult" HorizontalAlignment="Left" Width="500" />
         </StackPanel>
     </Grid>
 </Page>

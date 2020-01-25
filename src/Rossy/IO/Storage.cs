@@ -22,7 +22,7 @@ namespace Rossy.IO
         }
 
 
-        public (string, string) UploadFile(Stream file)
+        public string UploadFile(Stream file)
         {
             var token = Guid.NewGuid();
             string blobName = token.ToString();
@@ -33,7 +33,14 @@ namespace Rossy.IO
 
             var blobUrl = blob.Uri.AbsoluteUri;
 
-            return (blobName, blobUrl);
+            return blobUrl;
+        }
+
+        public void DeleteFile(Uri uri)
+        {
+            var builder = new BlobUriBuilder(uri);
+            var blobName = builder.BlobName;
+            DeleteFile(blobName);
         }
 
         public void DeleteFile(string blobName)

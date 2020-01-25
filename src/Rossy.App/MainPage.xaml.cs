@@ -37,37 +37,40 @@ namespace Rossy.App
             AppConfiguration = new AppConfig();
 
             txtUtterance.Text = "what's up?";
-            txtFilePath.Text = @"C:\Temp\WP_20170520_17_30_04_Rich.jpg";
+            txtFilePath.Text = "";
         }
 
         private async void btnAnalyze_Click(object sender, RoutedEventArgs e)
         {
             var config = new AppConfig();
             string utterance = txtUtterance.Text;
-            string filePath = txtFilePath.Text;
 
-            using (var fileStream = File.Open(filePath, FileMode.Open))
+            string blobUrl;
+            if (string.IsNullOrWhiteSpace(txtFilePath.Text))
             {
-                var storageManager = new Storage(config.StorageConfig);
-                var (fileName, blobUrl) = storageManager.UploadFile(fileStream);
-                fileStream.Close();
-                fileStream.Dispose();
-
-                var rosetta = new Rosetta(config.RosettaConfig);
-                var intent = rosetta.GuessIntent(utterance);
-                var analyzer = new Sherlock(config.SherlockConfig);
-                switch (intent)
-                {
-                    case "People":
-                        analyzer.People(blobUrl);
-                        break;
-                    case "FullScan":
-                    default:
-                        analyzer.FullScan(blobUrl);
-                        break;
-                }
-                storageManager.DeleteFile(fileName);
+                CameraCaptureUI dialog = new CameraCaptureUI();
+                StorageFile file = await dialog.CaptureFileAsync(CameraCaptureUIMode.Photo);
+                blobUrl = await UploadPicture(file);
             }
+            else
+            {
+                blobUrl = txtFilePath.Text;
+            }
+
+            var rosetta = new Rosetta(config.RosettaConfig);
+            var intent = rosetta.GuessIntent(utterance);
+            var analyzer = new Sherlock(config.SherlockConfig);
+            switch (intent)
+            {
+                case "People":
+                    analyzer.People(blobUrl);
+                    break;
+                case "FullScan":
+                default:
+                    analyzer.FullScan(blobUrl);
+                    break;
+            }
+            DeletePicture(blobUrl);
         }
 
         private async void btnPickFile_Click(object sender, RoutedEventArgs e)
@@ -77,13 +80,15 @@ namespace Rossy.App
             filePicker.ViewMode = PickerViewMode.Thumbnail;
 
             filePicker.FileTypeFilter.Clear();
-            filePicker.FileTypeFilter.Add(".jpeg"); filePicker.FileTypeFilter.Add(".jpg");
-            filePicker.FileTypeFilter.Add(".png"); filePicker.FileTypeFilter.Add(".gif");
+            filePicker.FileTypeFilter.Add(".jpeg"); 
+            filePicker.FileTypeFilter.Add(".jpg");
+            filePicker.FileTypeFilter.Add(".png");
 
             StorageFile file = await filePicker.PickSingleFileAsync();
             if (null != file)
             {
-                var (fileName, blobUrl) = await UploadPicture(file);
+                var blobUrl = await UploadPicture(file);
+                txtFilePath.Text = blobUrl;
             }
         }
 
@@ -91,18 +96,25 @@ namespace Rossy.App
         {
             CameraCaptureUI dialog = new CameraCaptureUI();
             StorageFile file = await dialog.CaptureFileAsync(CameraCaptureUIMode.Photo);
-            var (fileName, blobUrl) = await UploadPicture(file);
+            var blobUrl = await UploadPicture(file);
         }
 
-        private async Task<(string, string)> UploadPicture(StorageFile file)
+        private async Task<string> UploadPicture(StorageFile file)
         {
             var randomAccessStream = await file.OpenReadAsync();
             using (Stream stream = randomAccessStream.AsStreamForRead())
             {
                 var storageManager = new Storage(AppConfiguration.StorageConfig);
-                var (fileName, blobUrl) = storageManager.UploadFile(stream);
-                return (fileName, blobUrl);
+                var blobUrl = storageManager.UploadFile(stream);
+                return blobUrl;
             }
+        }
+
+        private void DeletePicture(string blobUrl)
+        {
+            var storageManager = new Storage(AppConfiguration.StorageConfig);
+            var blobUri = new Uri(blobUrl);
+            storageManager.DeleteFile(blobUri);
         }
     }
 }

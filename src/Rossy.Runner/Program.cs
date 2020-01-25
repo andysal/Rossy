@@ -16,7 +16,7 @@ namespace Rossy.Runner
             using (var fileStream = File.Open(filePath, FileMode.Open))
             {
                 var storageManager = new Storage(config.StorageConfig);
-                var (fileName, blobUrl) = storageManager.UploadFile(fileStream);
+                var blobUrl = storageManager.UploadFile(fileStream);
                 fileStream.Close();
                 fileStream.Dispose();
 
@@ -33,7 +33,8 @@ namespace Rossy.Runner
                         analyzer.FullScan(blobUrl);
                         break;
                 }
-                storageManager.DeleteFile(fileName);
+                var blobUri = new Uri(blobUrl);
+                storageManager.DeleteFile(blobUri);
             }
             Console.ReadLine();
         }
