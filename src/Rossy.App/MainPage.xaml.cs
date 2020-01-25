@@ -60,16 +60,18 @@ namespace Rossy.App
             var rosetta = new Rosetta(config.RosettaConfig);
             var intent = rosetta.GuessIntent(utterance);
             var analyzer = new Sherlock(config.SherlockConfig);
+            var response = string.Empty;
             switch (intent)
             {
                 case "People":
-                    analyzer.People(blobUrl);
+                    response = analyzer.People(blobUrl);
                     break;
                 case "FullScan":
                 default:
-                    analyzer.FullScan(blobUrl);
+                    response = analyzer.FullScan(blobUrl);
                     break;
             }
+            txtAnalysisResult.Text = response;
             DeletePicture(blobUrl);
         }
 

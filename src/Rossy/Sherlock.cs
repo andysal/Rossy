@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
+using System.Text;
 
 namespace Rossy
 {
@@ -33,11 +34,12 @@ namespace Rossy
             return client;
         }
 
-        public void FullScan(string imageUrl)
+        public string FullScan(string imageUrl)
         {
-            Console.WriteLine("----------------------------------------------------------");
-            Console.WriteLine("ANALYZE IMAGE - URL");
-            Console.WriteLine();
+            var builder = new StringBuilder();
+            builder.Append("----------------------------------------------------------");
+            builder.Append("ANALYZE IMAGE - URL");
+            
 
             // Creating a list that defines the features to be extracted from the image. 
             List<VisualFeatureTypes> features = new List<VisualFeatureTypes>()
@@ -49,75 +51,79 @@ namespace Rossy
                 VisualFeatureTypes.Objects
             };
 
-            Console.WriteLine($"Analyzing the image {Path.GetFileName(imageUrl)}...");
-            Console.WriteLine();
+            builder.Append($"Analyzing the image {Path.GetFileName(imageUrl)}...");
+            
             // Analyze the URL image 
             ImageAnalysis results = Client.AnalyzeImageAsync(imageUrl, features).Result;
 
             // Summarizes the image content.
-            Console.WriteLine("Summary:");
+            builder.Append("Summary:");
             foreach (var caption in results.Description.Captions)
             {
-                Console.WriteLine($"{caption.Text} with confidence {caption.Confidence}");
+                builder.Append($"{caption.Text} with confidence {caption.Confidence}");
             }
-            Console.WriteLine();
+            
 
             // Display categories the image is divided into.
-            Console.WriteLine("Categories:");
+            builder.Append("Categories:");
             foreach (var category in results.Categories)
             {
-                Console.WriteLine($"{category.Name} with confidence {category.Score}");
+                builder.Append($"{category.Name} with confidence {category.Score}");
             }
-            Console.WriteLine();
+            
 
             // Image tags and their confidence score
-            Console.WriteLine("Tags:");
+            builder.Append("Tags:");
             foreach (var tag in results.Tags)
             {
-                Console.WriteLine($"{tag.Name} {tag.Confidence}");
+                builder.Append($"{tag.Name} {tag.Confidence}");
             }
-            Console.WriteLine();
+            
 
             // Objects
-            Console.WriteLine("Objects:");
+            builder.Append("Objects:");
             foreach (var obj in results.Objects)
             {
-                Console.WriteLine($"{obj.ObjectProperty} with confidence {obj.Confidence} at location {obj.Rectangle.X}, " +
+                builder.Append($"{obj.ObjectProperty} with confidence {obj.Confidence} at location {obj.Rectangle.X}, " +
                 $"{obj.Rectangle.X + obj.Rectangle.W}, {obj.Rectangle.Y}, {obj.Rectangle.Y + obj.Rectangle.H}");
             }
-            Console.WriteLine();
+            
 
             // Well-known (or custom, if set) brands.
-            Console.WriteLine("Brands:");
+            builder.Append("Brands:");
             foreach (var brand in results.Brands)
             {
-                Console.WriteLine($"Logo of {brand.Name} with confidence {brand.Confidence} at location {brand.Rectangle.X}, " +
+                builder.Append($"Logo of {brand.Name} with confidence {brand.Confidence} at location {brand.Rectangle.X}, " +
                 $"{brand.Rectangle.X + brand.Rectangle.W}, {brand.Rectangle.Y}, {brand.Rectangle.Y + brand.Rectangle.H}");
             }
-            Console.WriteLine();
+            
 
             // Faces
-            Console.WriteLine("Faces:");
+            builder.Append("Faces:");
             foreach (var face in results.Faces)
             {
-                Console.WriteLine($"A {face.Gender} of age {face.Age} at location {face.FaceRectangle.Left}, " +
+                builder.Append($"A {face.Gender} of age {face.Age} at location {face.FaceRectangle.Left}, " +
                 $"{face.FaceRectangle.Left}, {face.FaceRectangle.Top + face.FaceRectangle.Width}, " +
                 $"{face.FaceRectangle.Top + face.FaceRectangle.Height}");
             }
-            Console.WriteLine();
+            
 
             // Adult or racy content, if any.
-            Console.WriteLine("Adult:");
-            Console.WriteLine($"Has adult content: {results.Adult.IsAdultContent} with confidence {results.Adult.AdultScore}");
-            Console.WriteLine($"Has racy content: {results.Adult.IsRacyContent} with confidence {results.Adult.RacyScore}");
-            Console.WriteLine();
+            builder.Append("Adult:");
+            builder.Append($"Has adult content: {results.Adult.IsAdultContent} with confidence {results.Adult.AdultScore}");
+            builder.Append($"Has racy content: {results.Adult.IsRacyContent} with confidence {results.Adult.RacyScore}");
+
+
+            return builder.ToString();
 
         }
-        public void People(string imageUrl)
+        public string People(string imageUrl)
         {
-            Console.WriteLine("----------------------------------------------------------");
-            Console.WriteLine("ANALYZE IMAGE - URL");
-            Console.WriteLine();
+            var builder = new StringBuilder();
+
+            builder.Append("----------------------------------------------------------");
+            builder.Append("ANALYZE IMAGE - URL");
+            
 
             // Creating a list that defines the features to be extracted from the image. 
             List<VisualFeatureTypes> features = new List<VisualFeatureTypes>()
@@ -127,35 +133,36 @@ namespace Rossy
                 VisualFeatureTypes.Tags, VisualFeatureTypes.Adult
             };
 
-            Console.WriteLine($"Analyzing the image {Path.GetFileName(imageUrl)}...");
-            Console.WriteLine();
+            builder.Append($"Analyzing the image {Path.GetFileName(imageUrl)}...");
+            
             // Analyze the URL image 
             ImageAnalysis results = Client.AnalyzeImageAsync(imageUrl, features).Result;
 
             // Image tags and their confidence score
-            Console.WriteLine("Tags:");
+            builder.Append("Tags:");
             foreach (var tag in results.Tags)
             {
-                Console.WriteLine($"{tag.Name} {tag.Confidence}");
+                builder.Append($"{tag.Name} {tag.Confidence}");
             }
-            Console.WriteLine();
+            
 
             // Faces
-            Console.WriteLine("Faces:");
+            builder.Append("Faces:");
             foreach (var face in results.Faces)
             {
-                Console.WriteLine($"A {face.Gender} of age {face.Age} at location {face.FaceRectangle.Left}, " +
+                builder.Append($"A {face.Gender} of age {face.Age} at location {face.FaceRectangle.Left}, " +
                 $"{face.FaceRectangle.Left}, {face.FaceRectangle.Top + face.FaceRectangle.Width}, " +
                 $"{face.FaceRectangle.Top + face.FaceRectangle.Height}");
             }
-            Console.WriteLine();
+            
 
             // Adult or racy content, if any.
-            Console.WriteLine("Adult:");
-            Console.WriteLine($"Has adult content: {results.Adult.IsAdultContent} with confidence {results.Adult.AdultScore}");
-            Console.WriteLine($"Has racy content: {results.Adult.IsRacyContent} with confidence {results.Adult.RacyScore}");
-            Console.WriteLine();
+            builder.Append("Adult:");
+            builder.Append($"Has adult content: {results.Adult.IsAdultContent} with confidence {results.Adult.AdultScore}");
+            builder.Append($"Has racy content: {results.Adult.IsRacyContent} with confidence {results.Adult.RacyScore}");
+            
 
+            return builder.ToString();
         }
 
 
