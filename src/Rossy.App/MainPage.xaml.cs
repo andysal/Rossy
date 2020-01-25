@@ -62,6 +62,13 @@ namespace Rossy.App
             else
             {
                 utterance = "what's up?";
+
+                //MediaCaptureInitializationSettings settings = new MediaCaptureInitializationSettings();
+                //settings.StreamingCaptureMode = StreamingCaptureMode.Audio;
+                //settings.MediaCategory = MediaCategory.Speech;
+                //MediaCapture capture = new MediaCapture();
+                //await capture.InitializeAsync();
+                
             }
 
             var rosetta = new Rosetta(config.RosettaConfig);

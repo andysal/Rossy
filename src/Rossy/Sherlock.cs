@@ -89,13 +89,13 @@ namespace Rossy
             }
             
 
-            // Well-known (or custom, if set) brands.
-            builder.Append("Brands:\n");
-            foreach (var brand in results.Brands)
-            {
-                builder.Append($"Logo of {brand.Name} with confidence {brand.Confidence} at location {brand.Rectangle.X}, " +
-                $"{brand.Rectangle.X + brand.Rectangle.W}, {brand.Rectangle.Y}, {brand.Rectangle.Y + brand.Rectangle.H}\n");
-            }
+            //// Well-known (or custom, if set) brands.
+            //builder.Append("Brands:\n");
+            //foreach (var brand in results.Brands)
+            //{
+            //    builder.Append($"Logo of {brand.Name} with confidence {brand.Confidence} at location {brand.Rectangle.X}, " +
+            //    $"{brand.Rectangle.X + brand.Rectangle.W}, {brand.Rectangle.Y}, {brand.Rectangle.Y + brand.Rectangle.H}\n");
+            //}
             
 
             // Faces
@@ -107,13 +107,6 @@ namespace Rossy
                 $"{face.FaceRectangle.Top + face.FaceRectangle.Height}\n");
             }
             
-
-            // Adult or racy content, if any.
-            builder.Append("Adult:\n");
-            builder.Append($"Has adult content: {results.Adult.IsAdultContent} with confidence {results.Adult.AdultScore}\n");
-            builder.Append($"Has racy content: {results.Adult.IsRacyContent} with confidence {results.Adult.RacyScore}\n");
-
-
             return builder.ToString();
 
         }
@@ -138,13 +131,19 @@ namespace Rossy
             // Analyze the URL image 
             ImageAnalysis results = Client.AnalyzeImageAsync(imageUrl, features).Result;
 
-            // Image tags and their confidence score
-            builder.Append("Tags:\n");
-            foreach (var tag in results.Tags)
+            // Summarizes the image content.
+            builder.Append("Summary:\n");
+            foreach (var caption in results.Description.Captions)
             {
-                builder.Append($"{tag.Name} {tag.Confidence}\n");
+                builder.Append($"{caption.Text} with confidence {caption.Confidence}\n");
             }
-            
+
+            //// Image tags and their confidence score
+            //builder.Append("Tags:\n");
+            //foreach (var tag in results.Tags)
+            //{
+            //    builder.Append($"{tag.Name} {tag.Confidence}\n");
+            //}          
 
             // Faces
             builder.Append("Faces:\n");
@@ -154,13 +153,6 @@ namespace Rossy
                 $"{face.FaceRectangle.Left}, {face.FaceRectangle.Top + face.FaceRectangle.Width}, " +
                 $"{face.FaceRectangle.Top + face.FaceRectangle.Height}\n");
             }
-            
-
-            // Adult or racy content, if any.
-            builder.Append("Adult:\n");
-            builder.Append($"Has adult content: {results.Adult.IsAdultContent} with confidence {results.Adult.AdultScore}\n");
-            builder.Append($"Has racy content: {results.Adult.IsRacyContent} with confidence {results.Adult.RacyScore}\n");
-            
 
             return builder.ToString();
         }
