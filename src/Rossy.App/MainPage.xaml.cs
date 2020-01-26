@@ -33,12 +33,12 @@ namespace Rossy.App
     /// </summary>
     public sealed partial class MainPage : Page
     {
-        private AppConfig AppConfiguration { get; set; }
+        private RossyConfiguration AppConfiguration { get; set; }
 
         public MainPage()
         {
             this.InitializeComponent();
-            AppConfiguration = new AppConfig();
+            AppConfiguration = new AppConfig().GetConfig();
 
             txtUtterance.Text = "what's up?";
             txtFilePath.Text = "";
@@ -48,8 +48,6 @@ namespace Rossy.App
 
         private async void btnAnalyze_Click(object sender, RoutedEventArgs e)
         {
-            var config = new AppConfig();
-
             string blobUrl;
             if(!string.IsNullOrWhiteSpace(txtFilePath.Text))
             {
@@ -70,12 +68,10 @@ namespace Rossy.App
                 utterance = "what's up?";               
             }
 
-            var rosetta = new Rosetta(config.RosettaConfig);
-            var intent = rosetta.GuessIntent(utterance);
-            var analyzer = new Sherlock(config.SherlockConfig);
-            Sherlock.AnalysisResult response = analyzer.Analyze(blobUrl, intent);
+            var analyzer = new Sherlock(AppConfiguration);
+            Sherlock.AnalysisResult response = analyzer.Analyze(blobUrl, utterance);
            
-            var modem = new Modem(config.ModemConfig);
+            var modem = new Modem(AppConfiguration.ModemConfig);
             var result = modem.ProduceSpeech(response.Result);
             Play(result);
 
@@ -92,6 +88,7 @@ namespace Rossy.App
             filePicker.FileTypeFilter.Clear();
             filePicker.FileTypeFilter.Add(".jpeg"); 
             filePicker.FileTypeFilter.Add(".jpg");
+            filePicker.FileTypeFilter.Add(".jfif");
             filePicker.FileTypeFilter.Add(".png");
 
             StorageFile file = await filePicker.PickSingleFileAsync();

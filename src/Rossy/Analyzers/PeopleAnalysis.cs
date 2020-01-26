@@ -48,7 +48,7 @@ namespace Rossy.Analyzers
             return logBuilder.ToString();
         }
 
-        public string ProduceSpeechText(ImageAnalysis imageAnalysis)
+        public string ProduceSpeechTextEnglish(ImageAnalysis imageAnalysis)
         {
             var resultBuilder = new StringBuilder();
             if (imageAnalysis.Faces.Count == 0)
@@ -58,7 +58,7 @@ namespace Rossy.Analyzers
             else if (imageAnalysis.Faces.Count == 1)
             {
                 var face = imageAnalysis.Faces.First();
-                resultBuilder.Append($"There is one {face.Gender} person of age {face.Age} around");
+                resultBuilder.Append($"There is one {face.Gender} person of age {face.Age}.");
             }
             else
             {
@@ -66,6 +66,33 @@ namespace Rossy.Analyzers
                 foreach (var face in imageAnalysis.Faces)
                 {
                     resultBuilder.Append($"a {face.Gender} of age {face.Age}, ");
+                }
+                resultBuilder.Append("."); //a little hack
+            }
+
+            return resultBuilder.ToString();
+        }
+
+        public string ProduceSpeechTextItalian(ImageAnalysis imageAnalysis)
+        {
+            var resultBuilder = new StringBuilder();
+            if (imageAnalysis.Faces.Count == 0)
+            {
+                resultBuilder.Append("Non vedo persone");
+            }
+            else if (imageAnalysis.Faces.Count == 1)
+            {
+                var face = imageAnalysis.Faces.First();
+                resultBuilder.Append(face.Gender == Gender.Female ? "C'è una donna" : "C'è un uomo");
+                resultBuilder.Append($" che sembra avere { face.Age} anni");
+            }
+            else
+            {
+                resultBuilder.Append($"Ci sono {imageAnalysis.Faces.Count}. Più precisamente: ");
+                foreach (var face in imageAnalysis.Faces)
+                {
+                    resultBuilder.Append(face.Gender == Gender.Female ? "una donna" : "un uomo");
+                    resultBuilder.Append($" che sembra avere {face.Age} anni, ");
                 }
                 resultBuilder.Append("."); //a little hack
             }

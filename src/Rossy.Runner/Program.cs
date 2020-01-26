@@ -8,7 +8,7 @@ namespace Rossy.Runner
     {
         static void Main(string[] args)
         {
-            var config = new AppConfig();
+            var config = new AppConfig().GetConfig();
 
             string utterance = "what's up?";
             string filePath = @"C:\Temp\Tricorder\etc\WP_20170520_17_30_04_Rich.jpg";
@@ -20,10 +20,8 @@ namespace Rossy.Runner
                 fileStream.Close();
                 fileStream.Dispose();
 
-                var rosetta = new Rosetta(config.RosettaConfig);
-                var intent = rosetta.GuessIntent(utterance);
-                var analyzer = new Sherlock(config.SherlockConfig);
-                Sherlock.AnalysisResult response = analyzer.Analyze(blobUrl, intent);
+                var analyzer = new Sherlock(config);
+                Sherlock.AnalysisResult response = analyzer.Analyze(blobUrl, utterance);
 
                 var modem = new Modem(config.ModemConfig);
                 modem.ProduceSpeech(response.Result);

@@ -9,6 +9,7 @@ namespace Rossy.Analyzers
     {
         List<VisualFeatureTypes> SetupAnalysisFeatures();
         string ProduceLog(ImageAnalysis imageAnalysis);
-        string ProduceSpeechText(ImageAnalysis imageAnalysis);
+        string ProduceSpeechTextEnglish(ImageAnalysis imageAnalysis);
+        string ProduceSpeechTextItalian(ImageAnalysis imageAnalysis);
     }
 }

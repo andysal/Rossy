@@ -8,23 +8,36 @@ namespace Rossy
 {
     public class Sherlock
     {
-        public Configuration Config { get; private set; }
+        public RossyConfiguration RossyConfig { get; private set; }
 
-        public Sherlock(Configuration configuration)
+        public Sherlock(RossyConfiguration rossyConfiguration)
         {
-            Config = configuration ?? throw new ArgumentNullException(nameof(configuration));
+            RossyConfig = rossyConfiguration ?? throw new ArgumentNullException(nameof(rossyConfiguration));
         }
 
-        public AnalysisResult Analyze(string imageUrl, string intent)
+        public AnalysisResult Analyze(string imageUrl, string utterance)
         {
+            var rosetta = new Rosetta(RossyConfig.RosettaConfig);
+            var intent = rosetta.GuessIntent(utterance);
             var analyzer = GetAnalyzer(intent);
             List<VisualFeatureTypes> features = analyzer.SetupAnalysisFeatures();
 
-            var client = new ComputerVisionClient(new ApiKeyServiceClientCredentials(Config.SubscriptionKey)) { Endpoint = Config.Endpoint };
+            var client = new ComputerVisionClient(new ApiKeyServiceClientCredentials(RossyConfig.SherlockConfig.SubscriptionKey)) { Endpoint = RossyConfig.SherlockConfig.Endpoint };
             ImageAnalysis imageAnalysis = client.AnalyzeImageAsync(imageUrl, features).Result;
             
             string log = analyzer.ProduceLog(imageAnalysis);
-            string speechText = analyzer.ProduceSpeechText(imageAnalysis);
+            var language = rosetta.GuessLanguage(utterance);
+            string speechText;
+            switch (language)
+            {
+                case "it":
+                    speechText = analyzer.ProduceSpeechTextItalian(imageAnalysis);
+                    break;
+                case "en":
+                default:
+                    speechText = analyzer.ProduceSpeechTextEnglish(imageAnalysis);
+                    break;
+            }
 
             return new AnalysisResult(speechText, log);
         }

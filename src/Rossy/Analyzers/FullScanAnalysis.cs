@@ -83,7 +83,14 @@ namespace Rossy.Analyzers
             return logBuilder.ToString();
         }
 
-        public string ProduceSpeechText(ImageAnalysis imageAnalysis)
+        public string ProduceSpeechTextEnglish(ImageAnalysis imageAnalysis)
+        {
+            var resultBuilder = new StringBuilder();
+            resultBuilder.Append($"{imageAnalysis.Description.Captions.First().Text}");
+            return resultBuilder.ToString();
+        }
+
+        public string ProduceSpeechTextItalian(ImageAnalysis imageAnalysis)
         {
             var resultBuilder = new StringBuilder();
             resultBuilder.Append($"{imageAnalysis.Description.Captions.First().Text}");
