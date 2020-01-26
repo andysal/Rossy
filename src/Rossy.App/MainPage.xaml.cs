@@ -77,6 +77,10 @@ namespace Rossy.App
             var intent = rosetta.GuessIntent(utterance);
             var analyzer = new Sherlock(config.SherlockConfig);
             Sherlock.AnalysisResult response = analyzer.Analyze(blobUrl, intent);
+           
+            var modem = new Modem(config.ModemConfig);
+            modem.Tell(response.Result);
+
             txtAnalysisResult.Text = response.Log;
             DeletePicture(blobUrl);
         }

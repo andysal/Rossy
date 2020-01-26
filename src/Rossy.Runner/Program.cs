@@ -24,9 +24,14 @@ namespace Rossy.Runner
                 var intent = rosetta.GuessIntent(utterance);
                 var analyzer = new Sherlock(config.SherlockConfig);
                 Sherlock.AnalysisResult response = analyzer.Analyze(blobUrl, intent);
+
+                var modem = new Modem(config.ModemConfig);
+                modem.Tell(response.Result);
+
+                Console.WriteLine(response.Log);
+
                 var blobUri = new Uri(blobUrl);
                 storageManager.DeleteFile(blobUri);
-                Console.WriteLine(response.Log);
             }
             Console.ReadLine();
         }

@@ -12,6 +12,7 @@ namespace Rossy.App
     class AppConfig
     {
         private readonly IConfigurationRoot _configurationRoot;
+        public Modem.Configuration ModemConfig => GetSection<Modem.Configuration>(nameof(Modem));
         public Rosetta.Configuration RosettaConfig => GetSection<Rosetta.Configuration>(nameof(Rosetta));
         public Sherlock.Configuration SherlockConfig => GetSection<Sherlock.Configuration>(nameof(Sherlock));
         public Storage.Configuration StorageConfig => GetSection<Storage.Configuration>(nameof(Storage));
