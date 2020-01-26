@@ -23,18 +23,10 @@ namespace Rossy.Runner
                 var rosetta = new Rosetta(config.RosettaConfig);
                 var intent = rosetta.GuessIntent(utterance);
                 var analyzer = new Sherlock(config.SherlockConfig);
-                switch (intent)
-                {
-                    case "People":
-                        analyzer.People(blobUrl);
-                        break;
-                    case "FullScan":
-                    default:
-                        analyzer.FullScan(blobUrl);
-                        break;
-                }
+                Sherlock.AnalysisResult response = analyzer.Analyze(blobUrl, intent);
                 var blobUri = new Uri(blobUrl);
                 storageManager.DeleteFile(blobUri);
+                Console.WriteLine(response.Log);
             }
             Console.ReadLine();
         }
