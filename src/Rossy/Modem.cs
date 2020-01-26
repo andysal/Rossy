@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.CognitiveServices.Speech;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -10,6 +11,7 @@ namespace Rossy
         {
             public string Endpoint { get; set; }
             public string Key { get; set; }
+            public string Region { get; set; }
         }
 
         public Configuration Config { get; private set; }
@@ -21,7 +23,13 @@ namespace Rossy
 
         public void Tell(string story)
         {
+            var config = SpeechConfig.FromSubscription(Config.Key, Config.Region);
+            using (var synthesizer = new SpeechSynthesizer(config))
+            using (var result = synthesizer.SpeakTextAsync(story).Result)
+            {
 
+                //synthesizer.SpeakTextAsync(story).Wait();
+            }
         }
     }
 }
