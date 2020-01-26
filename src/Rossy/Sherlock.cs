@@ -88,7 +88,7 @@ namespace Rossy
             {
                 logBuilder.Append($"{caption.Text} with confidence {caption.Confidence}\n");
             }
-            
+            resultBuilder.Append($"{results.Description.Captions.First().Text}");
 
             // Display categories the image is divided into.
             logBuilder.Append("Categories:\n");
@@ -163,14 +163,7 @@ namespace Rossy
             foreach (var caption in results.Description.Captions)
             {
                 logBuilder.Append($"{caption.Text} with confidence {caption.Confidence}\n");
-            }
-
-            //// Image tags and their confidence score
-            //builder.Append("Tags:\n");
-            //foreach (var tag in results.Tags)
-            //{
-            //    builder.Append($"{tag.Name} {tag.Confidence}\n");
-            //}          
+            }        
 
             // Faces
             logBuilder.Append("Faces:\n");
@@ -195,7 +188,7 @@ namespace Rossy
                 resultBuilder.Append($"There are {results.Faces.Count} people around. More in detail: ");
                 foreach (var face in results.Faces)
                 {
-                    resultBuilder.Append($"a {face.Gender} of age {face.Age},");
+                    resultBuilder.Append($"a {face.Gender} of age {face.Age}, ");
                 }
                 resultBuilder.Append("."); //a little hack
             }

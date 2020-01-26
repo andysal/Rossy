@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading;
 using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -66,14 +67,7 @@ namespace Rossy.App
                 utterance= txtUtterance.Text;
             else
             {
-                utterance = "what's up?";
-
-                //MediaCaptureInitializationSettings settings = new MediaCaptureInitializationSettings();
-                //settings.StreamingCaptureMode = StreamingCaptureMode.Audio;
-                //settings.MediaCategory = MediaCategory.Speech;
-                //MediaCapture capture = new MediaCapture();
-                //await capture.InitializeAsync();
-                
+                utterance = "what's up?";               
             }
 
             var rosetta = new Rosetta(config.RosettaConfig);
@@ -83,18 +77,7 @@ namespace Rossy.App
            
             var modem = new Modem(config.ModemConfig);
             var result = modem.Tell(response.Result);
-            using (var audioStream = AudioDataStream.FromResult(result))
-            {
-                // Save synthesized audio data as a wave file and user MediaPlayer to play it
-                var filePath = Path.Combine(ApplicationData.Current.LocalFolder.Path, "outputaudio_for_playback.wav");
-                await audioStream.SaveToWaveFileAsync(filePath);
-                var mediaPlayer = new MediaPlayer();
-                mediaPlayer.Source = MediaSource.CreateFromStorageFile(await StorageFile.GetFileFromPathAsync(filePath));
-                mediaPlayer.Play();
-
-                var file = StorageFile.GetFileFromPathAsync(filePath).GetResults();
-                await file.DeleteAsync();
-            }
+            Play(result);
 
             txtAnalysisResult.Text = response.Log;
             DeletePicture(blobUrl);
@@ -142,6 +125,28 @@ namespace Rossy.App
             var storageManager = new Storage(AppConfiguration.StorageConfig);
             var blobUri = new Uri(blobUrl);
             storageManager.DeleteFile(blobUri);
+        }
+
+        private async void Play(SpeechSynthesisResult speech)
+        {
+            //var stream = new MemoryStream(speech.AudioData);
+            //var mPlayer = new MediaPlayer();
+            //mPlayer.AudioCategory = MediaPlayerAudioCategory.Speech;
+            //mPlayer.Source = MediaSource.CreateFromStream(stream.AsRandomAccessStream(), "audio/wave");
+            //mPlayer.Play();
+
+            using (var audioStream = AudioDataStream.FromResult(speech))
+            {
+                var filePath = Path.Combine(ApplicationData.Current.LocalFolder.Path, "outputaudio_for_playback.wav");
+                await audioStream.SaveToWaveFileAsync(filePath);
+                var mediaPlayer = new MediaPlayer();
+                //mediaPlayer.MediaEnded += (sender, args) => {
+                //    var file = StorageFile.GetFileFromPathAsync(filePath).GetResults();
+                //    file.DeleteAsync();                
+                //};
+                mediaPlayer.Source = MediaSource.CreateFromStorageFile(await StorageFile.GetFileFromPathAsync(filePath));
+                mediaPlayer.Play();
+            }
         }
     }
 }
