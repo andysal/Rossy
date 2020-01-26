@@ -6,6 +6,7 @@ using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using System.Text;
+using System.Linq;
 
 namespace Rossy
 {
@@ -60,9 +61,10 @@ namespace Rossy
 
         private AnalysisResult FullScan(string imageUrl)
         {
-            var builder = new StringBuilder();
-            builder.Append("----------------------------------------------------------\n");
-            builder.Append("ANALYZE IMAGE - FULL SCAN\n");
+            var resultBuilder = new StringBuilder();
+            var logBuilder = new StringBuilder();
+            logBuilder.Append("----------------------------------------------------------\n");
+            logBuilder.Append("ANALYZE IMAGE - FULL SCAN\n");
             
 
             // Creating a list that defines the features to be extracted from the image. 
@@ -75,40 +77,40 @@ namespace Rossy
                 VisualFeatureTypes.Objects
             };
 
-            builder.Append($"Analyzing the image {Path.GetFileName(imageUrl)}...\n");
+            logBuilder.Append($"Analyzing the image {Path.GetFileName(imageUrl)}...\n");
             
             // Analyze the URL image 
             ImageAnalysis results = Client.AnalyzeImageAsync(imageUrl, features).Result;
 
             // Summarizes the image content.
-            builder.Append("Summary:\n");
+            logBuilder.Append("Summary:\n");
             foreach (var caption in results.Description.Captions)
             {
-                builder.Append($"{caption.Text} with confidence {caption.Confidence}\n");
+                logBuilder.Append($"{caption.Text} with confidence {caption.Confidence}\n");
             }
             
 
             // Display categories the image is divided into.
-            builder.Append("Categories:\n");
+            logBuilder.Append("Categories:\n");
             foreach (var category in results.Categories)
             {
-                builder.Append($"{category.Name} with confidence {category.Score}\n");
+                logBuilder.Append($"{category.Name} with confidence {category.Score}\n");
             }
             
 
             // Image tags and their confidence score
-            builder.Append("Tags:\n");
+            logBuilder.Append("Tags:\n");
             foreach (var tag in results.Tags)
             {
-                builder.Append($"{tag.Name} {tag.Confidence}\n");
+                logBuilder.Append($"{tag.Name} {tag.Confidence}\n");
             }
             
 
             // Objects
-            builder.Append("Objects:\n");
+            logBuilder.Append("Objects:\n");
             foreach (var obj in results.Objects)
             {
-                builder.Append($"{obj.ObjectProperty} with confidence {obj.Confidence} at location {obj.Rectangle.X}, " +
+                logBuilder.Append($"{obj.ObjectProperty} with confidence {obj.Confidence} at location {obj.Rectangle.X}, " +
                 $"{obj.Rectangle.X + obj.Rectangle.W}, {obj.Rectangle.Y}, {obj.Rectangle.Y + obj.Rectangle.H}\n");
             }
             
@@ -123,23 +125,24 @@ namespace Rossy
             
 
             // Faces
-            builder.Append("Faces:\n");
+            logBuilder.Append("Faces:\n");
             foreach (var face in results.Faces)
             {
-                builder.Append($"A {face.Gender} of age {face.Age} at location {face.FaceRectangle.Left}, " +
+                logBuilder.Append($"A {face.Gender} of age {face.Age} at location {face.FaceRectangle.Left}, " +
                 $"{face.FaceRectangle.Left}, {face.FaceRectangle.Top + face.FaceRectangle.Width}, " +
                 $"{face.FaceRectangle.Top + face.FaceRectangle.Height}\n");
             }
             
-            return new AnalysisResult(string.Empty, builder.ToString());
+            return new AnalysisResult(resultBuilder.ToString(), logBuilder.ToString());
 
         }
         private AnalysisResult People(string imageUrl)
         {
-            var builder = new StringBuilder();
+            var resultBuilder = new StringBuilder();
+            var logBuilder = new StringBuilder();
 
-            builder.Append("----------------------------------------------------------\n");
-            builder.Append("ANALYZE IMAGE - PEOPLE\n");
+            logBuilder.Append("----------------------------------------------------------\n");
+            logBuilder.Append("ANALYZE IMAGE - PEOPLE\n");
             
 
             // Creating a list that defines the features to be extracted from the image. 
@@ -150,16 +153,16 @@ namespace Rossy
                 VisualFeatureTypes.Tags, VisualFeatureTypes.Adult
             };
 
-            builder.Append($"Analyzing the image {Path.GetFileName(imageUrl)}...\n");
+            logBuilder.Append($"Analyzing the image {Path.GetFileName(imageUrl)}...\n");
             
             // Analyze the URL image 
             ImageAnalysis results = Client.AnalyzeImageAsync(imageUrl, features).Result;
 
             // Summarizes the image content.
-            builder.Append("Summary:\n");
+            logBuilder.Append("Summary:\n");
             foreach (var caption in results.Description.Captions)
             {
-                builder.Append($"{caption.Text} with confidence {caption.Confidence}\n");
+                logBuilder.Append($"{caption.Text} with confidence {caption.Confidence}\n");
             }
 
             //// Image tags and their confidence score
@@ -170,15 +173,34 @@ namespace Rossy
             //}          
 
             // Faces
-            builder.Append("Faces:\n");
+            logBuilder.Append("Faces:\n");
             foreach (var face in results.Faces)
             {
-                builder.Append($"A {face.Gender} of age {face.Age} at location {face.FaceRectangle.Left}, " +
+                logBuilder.Append($"A {face.Gender} of age {face.Age} at location {face.FaceRectangle.Left}, " +
                 $"{face.FaceRectangle.Left}, {face.FaceRectangle.Top + face.FaceRectangle.Width}, " +
                 $"{face.FaceRectangle.Top + face.FaceRectangle.Height}\n");
             }
 
-            return new AnalysisResult(string.Empty, builder.ToString());
+            if(results.Faces.Count==0)
+            {
+                resultBuilder.Append("There are no people around");
+            }
+            else if(results.Faces.Count==1)
+            {
+                var face = results.Faces.First();
+                resultBuilder.Append($"There is one {face.Gender} person of age {face.Age} around");
+            }
+            else
+            {
+                resultBuilder.Append($"There are {results.Faces.Count} people around. More in detail: ");
+                foreach (var face in results.Faces)
+                {
+                    resultBuilder.Append($"a {face.Gender} of age {face.Age},");
+                }
+                resultBuilder.Append("."); //a little hack
+            }
+
+            return new AnalysisResult(resultBuilder.ToString(), logBuilder.ToString());
         }
 
 
