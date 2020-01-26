@@ -91,6 +91,9 @@ namespace Rossy.App
                 var mediaPlayer = new MediaPlayer();
                 mediaPlayer.Source = MediaSource.CreateFromStorageFile(await StorageFile.GetFileFromPathAsync(filePath));
                 mediaPlayer.Play();
+
+                var file = StorageFile.GetFileFromPathAsync(filePath).GetResults();
+                await file.DeleteAsync();
             }
 
             txtAnalysisResult.Text = response.Log;
