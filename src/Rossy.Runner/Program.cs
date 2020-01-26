@@ -26,7 +26,7 @@ namespace Rossy.Runner
                 Sherlock.AnalysisResult response = analyzer.Analyze(blobUrl, intent);
 
                 var modem = new Modem(config.ModemConfig);
-                modem.Tell(response.Result);
+                modem.ProduceSpeech(response.Result);
 
                 Console.WriteLine(response.Log);
 

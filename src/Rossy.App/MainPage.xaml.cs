@@ -76,7 +76,7 @@ namespace Rossy.App
             Sherlock.AnalysisResult response = analyzer.Analyze(blobUrl, intent);
            
             var modem = new Modem(config.ModemConfig);
-            var result = modem.Tell(response.Result);
+            var result = modem.ProduceSpeech(response.Result);
             Play(result);
 
             txtAnalysisResult.Text = response.Log;

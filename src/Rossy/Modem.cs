@@ -21,7 +21,7 @@ namespace Rossy
             Config = configuration ?? throw new ArgumentNullException(nameof(configuration));
         }
 
-        public SpeechSynthesisResult Tell(string story)
+        public SpeechSynthesisResult ProduceSpeech(string story)
         {
             var config = SpeechConfig.FromSubscription(Config.Key, Config.Region);
             using (var synthesizer = new SpeechSynthesizer(config))
