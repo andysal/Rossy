@@ -21,14 +21,12 @@ namespace Rossy
             Config = configuration ?? throw new ArgumentNullException(nameof(configuration));
         }
 
-        public void Tell(string story)
+        public SpeechSynthesisResult Tell(string story)
         {
             var config = SpeechConfig.FromSubscription(Config.Key, Config.Region);
             using (var synthesizer = new SpeechSynthesizer(config))
-            using (var result = synthesizer.SpeakTextAsync(story).Result)
             {
-
-                //synthesizer.SpeakTextAsync(story).Wait();
+                return synthesizer.SpeakTextAsync(story).Result;
             }
         }
     }

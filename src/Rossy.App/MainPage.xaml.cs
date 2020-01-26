@@ -1,4 +1,5 @@
-﻿using Rossy.IO;
+﻿using Microsoft.CognitiveServices.Speech;
+using Rossy.IO;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -8,6 +9,8 @@ using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Media.Capture;
+using Windows.Media.Core;
+using Windows.Media.Playback;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.Storage.Streams;
@@ -79,7 +82,16 @@ namespace Rossy.App
             Sherlock.AnalysisResult response = analyzer.Analyze(blobUrl, intent);
            
             var modem = new Modem(config.ModemConfig);
-            modem.Tell(response.Result);
+            var result = modem.Tell(response.Result);
+            using (var audioStream = AudioDataStream.FromResult(result))
+            {
+                // Save synthesized audio data as a wave file and user MediaPlayer to play it
+                var filePath = Path.Combine(ApplicationData.Current.LocalFolder.Path, "outputaudio_for_playback.wav");
+                await audioStream.SaveToWaveFileAsync(filePath);
+                var mediaPlayer = new MediaPlayer();
+                mediaPlayer.Source = MediaSource.CreateFromStorageFile(await StorageFile.GetFileFromPathAsync(filePath));
+                mediaPlayer.Play();
+            }
 
             txtAnalysisResult.Text = response.Log;
             DeletePicture(blobUrl);
