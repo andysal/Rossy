@@ -13,6 +13,39 @@ namespace Rossy
 {
     public class Sherlock
     {
+        public Configuration Config { get; private set; }
+
+        public Sherlock(Configuration configuration)
+        {
+            Config = configuration ?? throw new ArgumentNullException(nameof(configuration));
+        }
+
+        public AnalysisResult Analyze(string imageUrl, string intent)
+        {
+            var analyzer = GetAnalyzer(intent);
+            List<VisualFeatureTypes> features = analyzer.SetupAnalysisFeatures();
+
+            var client = new ComputerVisionClient(new ApiKeyServiceClientCredentials(Config.SubscriptionKey)) { Endpoint = Config.Endpoint };
+            ImageAnalysis imageAnalysis = client.AnalyzeImageAsync(imageUrl, features).Result;
+            
+            string log = analyzer.ProduceLog(imageAnalysis);
+            string speechText = analyzer.ProduceSpeechText(imageAnalysis);
+
+            return new AnalysisResult(speechText, log);
+        }
+
+        private IAnalyzer GetAnalyzer(string intent)
+        {
+            switch (intent)
+            {
+                case "People":
+                    return new PeopleAnalysis();
+                case "FullScan":
+                default:
+                    return new FullScanAnalysis();
+            }
+        }
+
         public class Configuration
         {
             public string Endpoint { get; set; }
@@ -29,34 +62,6 @@ namespace Rossy
 
             public string Result { get; private set; }
             public string Log { get; private set; }
-        }
-
-        public ComputerVisionClient Client { get; private set; }
-
-        public Configuration Config { get; private set; }
-
-        public Sherlock(Configuration configuration)
-        {
-            Config = configuration ?? throw new ArgumentNullException(nameof(configuration));
-            Client = Authenticate(Config.Endpoint, Config.SubscriptionKey);
-        }
-
-        private ComputerVisionClient Authenticate(string endpoint, string key)
-        {
-            var client = new ComputerVisionClient(new ApiKeyServiceClientCredentials(key))
-                                { Endpoint = endpoint };
-            return client;
-        }
-
-        public AnalysisResult Analyze(string imageUrl, string intent)
-        {
-            var analyzer = Analyzer.GetAnalyzer(intent);
-            List<VisualFeatureTypes> features = analyzer.SetupAnalysisFeatures();
-            ImageAnalysis imageAnalysis = Client.AnalyzeImageAsync(imageUrl, features).Result;
-            string log = analyzer.ProduceLog(imageAnalysis);
-            string speechText = analyzer.ProduceSpeechText(imageAnalysis);
-
-            return new AnalysisResult(speechText, log);
         }
     }
 }

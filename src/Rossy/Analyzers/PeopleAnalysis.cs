@@ -6,9 +6,9 @@ using System.Text;
 
 namespace Rossy.Analyzers
 {
-    public class PeopleAnalysis : Analyzer
+    public class PeopleAnalysis : IAnalyzer
     {
-        public override List<VisualFeatureTypes> SetupAnalysisFeatures()
+        public List<VisualFeatureTypes> SetupAnalysisFeatures()
         {
             // Creating a list that defines the features to be extracted from the image. 
             List<VisualFeatureTypes> features = new List<VisualFeatureTypes>()
@@ -21,7 +21,7 @@ namespace Rossy.Analyzers
             return features;
         }
 
-        public override string ProduceLog(ImageAnalysis imageAnalysis)
+        public string ProduceLog(ImageAnalysis imageAnalysis)
         {
             var logBuilder = new StringBuilder();
 
@@ -48,7 +48,7 @@ namespace Rossy.Analyzers
             return logBuilder.ToString();
         }
 
-        public override string ProduceSpeechText(ImageAnalysis imageAnalysis)
+        public string ProduceSpeechText(ImageAnalysis imageAnalysis)
         {
             var resultBuilder = new StringBuilder();
             if (imageAnalysis.Faces.Count == 0)

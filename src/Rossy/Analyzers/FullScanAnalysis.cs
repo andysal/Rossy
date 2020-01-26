@@ -6,9 +6,9 @@ using System.Text;
 
 namespace Rossy.Analyzers
 {
-    public class FullScanAnalysis : Analyzer
+    public class FullScanAnalysis : IAnalyzer
     {
-        public override List<VisualFeatureTypes> SetupAnalysisFeatures()
+        public List<VisualFeatureTypes> SetupAnalysisFeatures()
         {
             List<VisualFeatureTypes> features = new List<VisualFeatureTypes>()
             {
@@ -22,7 +22,7 @@ namespace Rossy.Analyzers
             return features;
         }
 
-        public override string ProduceLog(ImageAnalysis imageAnalysis)
+        public string ProduceLog(ImageAnalysis imageAnalysis)
         {
             var logBuilder = new StringBuilder();
             logBuilder.Append("----------------------------------------------------------\n");
@@ -83,7 +83,7 @@ namespace Rossy.Analyzers
             return logBuilder.ToString();
         }
 
-        public override string ProduceSpeechText(ImageAnalysis imageAnalysis)
+        public string ProduceSpeechText(ImageAnalysis imageAnalysis)
         {
             var resultBuilder = new StringBuilder();
             resultBuilder.Append($"{imageAnalysis.Description.Captions.First().Text}");
