@@ -7,13 +7,6 @@ namespace Rossy
 {
     public class Modem
     {
-        public class Configuration
-        {
-            public string Endpoint { get; set; }
-            public string Key { get; set; }
-            public string Region { get; set; }
-        }
-
         public Configuration Config { get; private set; }
 
         public Modem(Configuration configuration)
@@ -28,6 +21,12 @@ namespace Rossy
             {
                 return synthesizer.SpeakTextAsync(story).Result;
             }
+        }
+        public class Configuration
+        {
+            public string Endpoint { get; set; }
+            public string Key { get; set; }
+            public string Region { get; set; }
         }
     }
 }

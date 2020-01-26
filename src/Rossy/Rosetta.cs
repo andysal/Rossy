@@ -13,16 +13,6 @@ namespace Rossy
 {
     public class Rosetta
     {
-        public class Configuration
-        {
-            public string TextAnalysisEndpoint { get; set; }
-            public string TextAnalysisSubscriptionKey { get; set; }
-            public string Endpoint { get; set; }
-            public string PredictionKey { get; set; }
-            public string AppIdEN { get; set; }
-            public string AppIdIT { get; set; }
-        }
-
         public Configuration Config { get; private set; }
 
         public Rosetta(Configuration configuration)
@@ -94,6 +84,16 @@ namespace Rossy
                     showAllIntents: true,
                     log: true).Result;
             }
+        }
+
+        public class Configuration
+        {
+            public string TextAnalysisEndpoint { get; set; }
+            public string TextAnalysisSubscriptionKey { get; set; }
+            public string Endpoint { get; set; }
+            public string PredictionKey { get; set; }
+            public string AppIdEN { get; set; }
+            public string AppIdIT { get; set; }
         }
     }
 }

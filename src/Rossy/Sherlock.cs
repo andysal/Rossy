@@ -2,11 +2,6 @@
 using Microsoft.Azure.CognitiveServices.Vision.ComputerVision.Models;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Text;
-using System.Threading.Tasks;
-using System.Text;
-using System.Linq;
 using Rossy.Analyzers;
 
 namespace Rossy
