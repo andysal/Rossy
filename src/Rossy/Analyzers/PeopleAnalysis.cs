@@ -51,6 +51,8 @@ namespace Rossy.Analyzers
         public string ProduceSpeechTextEnglish(ImageAnalysis imageAnalysis)
         {
             var resultBuilder = new StringBuilder();
+            resultBuilder.Append("<speak version=\"1.0\" xmlns=\"https://www.w3.org/2001/10/synthesis\" xml:lang=\"en-US\">");
+            resultBuilder.Append("<voice name=\"en-US-GuyNeural\">");
             if (imageAnalysis.Faces.Count == 0)
             {
                 resultBuilder.Append("There are no people around");
@@ -69,13 +71,16 @@ namespace Rossy.Analyzers
                 }
                 resultBuilder.Append("."); //a little hack
             }
-
+            resultBuilder.Append("</voice>");
+            resultBuilder.Append("</speak>");
             return resultBuilder.ToString();
         }
 
         public string ProduceSpeechTextItalian(ImageAnalysis imageAnalysis)
         {
             var resultBuilder = new StringBuilder();
+            resultBuilder.Append("<speak version=\"1.0\" xmlns=\"https://www.w3.org/2001/10/synthesis\" xml:lang=\"it-IT\">");
+            resultBuilder.Append("<voice name=\"it-IT-ElsaNeural\">");
             if (imageAnalysis.Faces.Count == 0)
             {
                 resultBuilder.Append("Non vedo persone");
@@ -88,7 +93,7 @@ namespace Rossy.Analyzers
             }
             else
             {
-                resultBuilder.Append($"Ci sono {imageAnalysis.Faces.Count}. Più precisamente: ");
+                resultBuilder.Append($"Ci sono {imageAnalysis.Faces.Count} persone. Più precisamente: ");
                 foreach (var face in imageAnalysis.Faces)
                 {
                     resultBuilder.Append(face.Gender == Gender.Female ? "una donna" : "un uomo");
@@ -96,7 +101,8 @@ namespace Rossy.Analyzers
                 }
                 resultBuilder.Append("."); //a little hack
             }
-
+            resultBuilder.Append("</voice>");
+            resultBuilder.Append("</speak>");
             return resultBuilder.ToString();
         }
     }

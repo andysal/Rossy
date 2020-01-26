@@ -19,7 +19,7 @@ namespace Rossy
             var config = SpeechConfig.FromSubscription(Config.Key, Config.Region);
             using (var synthesizer = new SpeechSynthesizer(config))
             {
-                return synthesizer.SpeakTextAsync(story).Result;
+                return synthesizer.SpeakSsmlAsync(story).Result;
             }
         }
         public class Configuration

@@ -86,14 +86,22 @@ namespace Rossy.Analyzers
         public string ProduceSpeechTextEnglish(ImageAnalysis imageAnalysis)
         {
             var resultBuilder = new StringBuilder();
+            resultBuilder.Append("<speak version=\"1.0\" xmlns=\"https://www.w3.org/2001/10/synthesis\" xml:lang=\"en-US\">");
+            resultBuilder.Append("<voice name=\"en-US-GuyNeural\">");
             resultBuilder.Append($"{imageAnalysis.Description.Captions.First().Text}");
+            resultBuilder.Append("</voice>");
+            resultBuilder.Append("</speak>");
             return resultBuilder.ToString();
         }
 
         public string ProduceSpeechTextItalian(ImageAnalysis imageAnalysis)
         {
             var resultBuilder = new StringBuilder();
+            resultBuilder.Append("<speak version=\"1.0\" xmlns=\"https://www.w3.org/2001/10/synthesis\" xml:lang=\"it-IT\">");
+            resultBuilder.Append("<voice name=\"it-IT-ElsaNeural\">");
             resultBuilder.Append($"{imageAnalysis.Description.Captions.First().Text}");
+            resultBuilder.Append("</voice>");
+            resultBuilder.Append("</speak>");
             return resultBuilder.ToString();
         }
     }
