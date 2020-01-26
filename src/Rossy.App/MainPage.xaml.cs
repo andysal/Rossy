@@ -38,6 +38,8 @@ namespace Rossy.App
 
             txtUtterance.Text = "what's up?";
             txtFilePath.Text = "";
+
+
         }
 
         private async void btnAnalyze_Click(object sender, RoutedEventArgs e)
@@ -74,18 +76,8 @@ namespace Rossy.App
             var rosetta = new Rosetta(config.RosettaConfig);
             var intent = rosetta.GuessIntent(utterance);
             var analyzer = new Sherlock(config.SherlockConfig);
-            string response;
-            switch (intent)
-            {
-                case "People":
-                    response = analyzer.People(blobUrl);
-                    break;
-                case "FullScan":
-                default:
-                    response = analyzer.FullScan(blobUrl);
-                    break;
-            }
-            txtAnalysisResult.Text = response;
+            Sherlock.AnalysisResult response = analyzer.Analyze(blobUrl, intent);
+            txtAnalysisResult.Text = response.Log;
             DeletePicture(blobUrl);
         }
 

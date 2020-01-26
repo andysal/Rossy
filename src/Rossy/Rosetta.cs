@@ -36,7 +36,7 @@ namespace Rossy
             return prediction.Prediction.TopIntent;
         }
 
-        private string GuessLanguage(string utterance)
+        public string GuessLanguage(string utterance)
         {
             var credentials = new ApiKeyServiceClientCredentials(Config.TextAnalysisSubscriptionKey);
             

@@ -17,6 +17,18 @@ namespace Rossy
             public string SubscriptionKey { get; set; }
         }
 
+        public class AnalysisResult
+        {
+            public AnalysisResult(string result, string log)
+            {
+                Result = result ?? throw new ArgumentNullException(nameof(result));
+                Log = log ?? throw new ArgumentNullException(nameof(log));
+            }
+
+            public string Result { get; private set; }
+            public string Log { get; private set; }
+        }
+
         public ComputerVisionClient Client { get; private set; }
 
         public Configuration Config { get; private set; }
@@ -34,7 +46,19 @@ namespace Rossy
             return client;
         }
 
-        public string FullScan(string imageUrl)
+        public AnalysisResult Analyze(string blobUrl, string intent)
+        {
+            switch (intent)
+            {
+                case "People":
+                    return this.People(blobUrl);
+                case "FullScan":
+                default:
+                    return this.FullScan(blobUrl);
+            }
+        }
+
+        private AnalysisResult FullScan(string imageUrl)
         {
             var builder = new StringBuilder();
             builder.Append("----------------------------------------------------------\n");
@@ -107,10 +131,10 @@ namespace Rossy
                 $"{face.FaceRectangle.Top + face.FaceRectangle.Height}\n");
             }
             
-            return builder.ToString();
+            return new AnalysisResult(string.Empty, builder.ToString());
 
         }
-        public string People(string imageUrl)
+        private AnalysisResult People(string imageUrl)
         {
             var builder = new StringBuilder();
 
@@ -154,7 +178,7 @@ namespace Rossy
                 $"{face.FaceRectangle.Top + face.FaceRectangle.Height}\n");
             }
 
-            return builder.ToString();
+            return new AnalysisResult(string.Empty, builder.ToString());
         }
 
 

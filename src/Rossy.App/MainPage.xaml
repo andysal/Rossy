@@ -15,9 +15,13 @@
                 <Button Name="btnPickFile" Content="Pick" VerticalAlignment="Top" Click="btnPickFile_Click" />
                 <Button Name="btnTakePicture" Content="Take" VerticalAlignment="Top" Click="btnTakePicture_Click" />
             </StackPanel>
-            <TextBox Name="txtUtterance" HorizontalAlignment="Left" Text="TextBox" TextWrapping="Wrap" VerticalAlignment="Top" Width="500" />
+            <StackPanel Orientation="Horizontal">
+                <TextBox Name="txtUtterance" HorizontalAlignment="Left" Text="TextBox" TextWrapping="Wrap" VerticalAlignment="Top" Width="500" />
+            </StackPanel>
             <Button Name="btnAnalyze" Content="Analyze" VerticalAlignment="Top" Click="btnAnalyze_Click"/>
-            <TextBlock Name="txtAnalysisResult" HorizontalAlignment="Left" Width="800" Height="800" />
+            <ScrollViewer VerticalScrollMode="Auto"  VerticalScrollBarVisibility="Auto">
+                <TextBlock Name="txtAnalysisResult" HorizontalAlignment="Left" TextWrapping="WrapWholeWords" Width="800" Height="800" />
+            </ScrollViewer>
         </StackPanel>
     </Grid>
 </Page>
