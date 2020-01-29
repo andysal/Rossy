@@ -6,11 +6,11 @@ using Rossy.Analyzers;
 
 namespace Rossy
 {
-    public class Sherlock
+    public class Geordi
     {
         public Rossy.Configuration RossyConfig { get; private set; }
 
-        public Sherlock(Rossy.Configuration rossyConfiguration)
+        public Geordi(Rossy.Configuration rossyConfiguration)
         {
             RossyConfig = rossyConfiguration ?? throw new ArgumentNullException(nameof(rossyConfiguration));
         }
@@ -22,7 +22,7 @@ namespace Rossy
             var analyzer = GetAnalyzer(intent);
             List<VisualFeatureTypes> features = analyzer.SetupAnalysisFeatures();
 
-            var client = new ComputerVisionClient(new ApiKeyServiceClientCredentials(RossyConfig.SherlockConfig.SubscriptionKey)) { Endpoint = RossyConfig.SherlockConfig.Endpoint };
+            var client = new ComputerVisionClient(new ApiKeyServiceClientCredentials(RossyConfig.GeordiConfig.SubscriptionKey)) { Endpoint = RossyConfig.GeordiConfig.Endpoint };
             ImageAnalysis imageAnalysis = client.AnalyzeImageAsync(imageUrl, features).Result;
             
             string log = analyzer.ProduceLog(imageAnalysis);

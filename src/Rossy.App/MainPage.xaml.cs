@@ -67,10 +67,13 @@ namespace Rossy.App
             {
                 utterance = "what's up?";               
             }
-            imgPhoto.Source = new BitmapImage(new Uri(txtFilePath.Text));
 
-            var analyzer = new Sherlock(AppConfiguration);
-            Sherlock.AnalysisResult response = analyzer.Analyze(blobUrl, utterance);
+            var fileUri = txtFilePath.Text;
+            var bitmapImage = new BitmapImage(new Uri(fileUri, UriKind.Absolute));
+            imgPhoto.Source = bitmapImage;
+
+            var analyzer = new Geordi(AppConfiguration);
+            Geordi.AnalysisResult response = analyzer.Analyze(blobUrl, utterance);
            
             var modem = new Modem(AppConfiguration.ModemConfig);
             var result = modem.ProduceSpeech(response.Result);

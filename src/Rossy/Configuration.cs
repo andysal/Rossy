@@ -6,7 +6,7 @@ namespace Rossy
     {
         public Modem.Configuration ModemConfig { get; set; }
         public Rosetta.Configuration RosettaConfig { get; set; }
-        public Sherlock.Configuration SherlockConfig { get; set; }
+        public Geordi.Configuration GeordiConfig { get; set; }
         public Storage.Configuration StorageConfig { get; set; }
     }
 }

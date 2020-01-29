@@ -21,13 +21,15 @@
             </StackPanel>
             <Button Name="btnAnalyze" Content="Analyze" VerticalAlignment="Top" Click="btnAnalyze_Click"/>
             <controls:TabView HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                <controls:TabViewItem Header="Photo">
+                    <StackPanel>
+                        <Image x:Name="imgPhoto" Stretch="None" />
+                    </StackPanel>
+                </controls:TabViewItem>
                 <controls:TabViewItem Header="Log">
-                    <ScrollViewer VerticalScrollMode="Auto"  VerticalScrollBarVisibility="Auto">
+                    <ScrollViewer VerticalScrollMode="Auto" VerticalScrollBarVisibility="Auto">
                         <TextBlock Name="txtAnalysisResult" HorizontalAlignment="Left" TextWrapping="WrapWholeWords" Width="800" Height="800" />
                     </ScrollViewer>
-                </controls:TabViewItem>
-                <controls:TabViewItem Header="Photo">
-                    <Image x:Name="imgPhoto" Width="300" Height="300" />
                 </controls:TabViewItem>
             </controls:TabView>
         </StackPanel>

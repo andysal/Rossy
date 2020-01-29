@@ -31,7 +31,7 @@ namespace Rossy.App
             {
                 ModemConfig = GetSection<Modem.Configuration>(nameof(Modem)),
                 RosettaConfig = GetSection<Rosetta.Configuration>(nameof(Rosetta)),
-                SherlockConfig = GetSection<Sherlock.Configuration>(nameof(Sherlock)),
+                GeordiConfig = GetSection<Geordi.Configuration>(nameof(Geordi)),
                 StorageConfig = GetSection<Storage.Configuration>(nameof(Storage))
             };
             return config;

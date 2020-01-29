@@ -20,8 +20,8 @@ namespace Rossy.Runner
                 fileStream.Close();
                 fileStream.Dispose();
 
-                var analyzer = new Sherlock(config);
-                Sherlock.AnalysisResult response = analyzer.Analyze(blobUrl, utterance);
+                var analyzer = new Geordi(config);
+                Geordi.AnalysisResult response = analyzer.Analyze(blobUrl, utterance);
 
                 var modem = new Modem(config.ModemConfig);
                 modem.ProduceSpeech(response.Result);
