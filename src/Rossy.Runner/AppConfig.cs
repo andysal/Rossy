@@ -25,9 +25,9 @@ namespace Rossy.Runner
 
         private T GetSection<T>(string key) => _configurationRoot.GetSection(key).Get<T>();
 
-        public RossyConfiguration GetConfig()
+        public Configuration GetConfig()
         {
-            var config = new RossyConfiguration()
+            var config = new Configuration()
             {
                 ModemConfig = GetSection<Modem.Configuration>(nameof(Modem)),
                 RosettaConfig = GetSection<Rosetta.Configuration>(nameof(Rosetta)),

@@ -8,9 +8,9 @@ namespace Rossy
 {
     public class Sherlock
     {
-        public RossyConfiguration RossyConfig { get; private set; }
+        public Rossy.Configuration RossyConfig { get; private set; }
 
-        public Sherlock(RossyConfiguration rossyConfiguration)
+        public Sherlock(Rossy.Configuration rossyConfiguration)
         {
             RossyConfig = rossyConfiguration ?? throw new ArgumentNullException(nameof(rossyConfiguration));
         }

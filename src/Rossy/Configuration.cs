@@ -2,7 +2,7 @@
 
 namespace Rossy
 {
-    public class RossyConfiguration
+    public class Configuration
     {
         public Modem.Configuration ModemConfig { get; set; }
         public Rosetta.Configuration RosettaConfig { get; set; }

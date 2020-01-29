@@ -33,7 +33,7 @@ namespace Rossy.App
     /// </summary>
     public sealed partial class MainPage : Page
     {
-        private RossyConfiguration AppConfiguration { get; set; }
+        private Configuration AppConfiguration { get; set; }
 
         public MainPage()
         {
@@ -67,6 +67,7 @@ namespace Rossy.App
             {
                 utterance = "what's up?";               
             }
+            imgPhoto.Source = new BitmapImage(new Uri(txtFilePath.Text));
 
             var analyzer = new Sherlock(AppConfiguration);
             Sherlock.AnalysisResult response = analyzer.Analyze(blobUrl, utterance);
@@ -112,7 +113,7 @@ namespace Rossy.App
             using (Stream stream = randomAccessStream.AsStreamForRead())
             {
                 var storageManager = new Storage(AppConfiguration.StorageConfig);
-                var blobUrl = storageManager.UploadFile(stream);
+                var blobUrl = storageManager.UploadFile(stream, file.FileType);
                 return blobUrl;
             }
         }

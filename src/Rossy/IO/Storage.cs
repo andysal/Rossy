@@ -1,4 +1,5 @@
 ﻿using Azure.Storage.Blobs;
+using Azure.Storage.Blobs.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -22,14 +23,16 @@ namespace Rossy.IO
         }
 
 
-        public string UploadFile(Stream file)
+        public string UploadFile(Stream file, string extension)
         {
             var token = Guid.NewGuid();
-            string blobName = token.ToString();
+            string blobName = $"{token}{extension}";
 
             var container = new BlobContainerClient(Config.ConnectionString, Config.ContainerName);
             var blob = container.GetBlobClient(blobName);
-            blob.Upload(file);
+            var blobHttpHeader = new BlobHttpHeaders();
+            blobHttpHeader.ContentType = GetMimeType(extension);
+            blob.Upload(file, blobHttpHeader);
 
             var blobUrl = blob.Uri.AbsoluteUri;
 
@@ -47,6 +50,23 @@ namespace Rossy.IO
         {
             var container = new BlobContainerClient(Config.ConnectionString, Config.ContainerName);
             container.DeleteBlobIfExists(blobName);
+        }
+
+        private string GetMimeType(string extension)
+        {
+            switch(extension)
+            {
+                case ".gif":
+                    return "image/gif";
+                case ".png":
+                    return "image/png";
+                case ".jpg":
+                case ".jpeg":
+                case ".jfif":
+                    return "image/jpeg";
+                default:
+                    return "application/octet-stream";
+            }
         }
     }
 }
