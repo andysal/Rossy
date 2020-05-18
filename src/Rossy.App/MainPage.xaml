@@ -18,6 +18,7 @@
             </StackPanel>
             <StackPanel Orientation="Horizontal">
                 <TextBox Name="txtUtterance" HorizontalAlignment="Left" Text="TextBox" TextWrapping="Wrap" VerticalAlignment="Top" Width="500" />
+                <Button Name="btnListen" Content="Listen" VerticalAlignment="Top" Click="btnListen_Click" />
             </StackPanel>
             <Button Name="btnAnalyze" Content="Analyze" VerticalAlignment="Top" Click="btnAnalyze_Click"/>
             <controls:TabView HorizontalAlignment="Stretch" VerticalAlignment="Stretch">

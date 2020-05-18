@@ -42,8 +42,6 @@ namespace Rossy.App
 
             txtUtterance.Text = "what's up?";
             txtFilePath.Text = "";
-
-
         }
 
         private async void btnAnalyze_Click(object sender, RoutedEventArgs e)
@@ -81,6 +79,15 @@ namespace Rossy.App
 
             txtAnalysisResult.Text = response.Log;
             DeletePicture(blobUrl);
+        }
+
+        private async void btnListen_Click(object sender, RoutedEventArgs e)
+        {
+            bool permissionGained = await AudioCapturePermissions.RequestMicrophonePermission();
+            txtUtterance.Text = "(listening...)";
+            var modem = new Modem(AppConfiguration.ModemConfig);
+            var utterance = modem.Listen();
+            txtUtterance.Text = utterance.Item1;
         }
 
         private async void btnPickFile_Click(object sender, RoutedEventArgs e)
@@ -149,5 +156,7 @@ namespace Rossy.App
                 mediaPlayer.Play();
             }
         }
+
+
     }
 }

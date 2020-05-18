@@ -30,7 +30,7 @@ namespace Rossy
         {
             var credentials = new ApiKeyServiceClientCredentials(Config.TextAnalysisSubscriptionKey);
             
-            TextAnalyticsClient client = new TextAnalyticsClient(credentials)
+            var client = new TextAnalyticsClient(credentials)
             {
                 Endpoint = Config.TextAnalysisEndpoint
             };
