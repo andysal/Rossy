@@ -115,6 +115,7 @@ namespace Rossy.App
             CameraCaptureUI dialog = new CameraCaptureUI();
             StorageFile file = await dialog.CaptureFileAsync(CameraCaptureUIMode.Photo);
             var blobUrl = await UploadPicture(file);
+            txtFilePath.Text = blobUrl;
         }
 
         private async Task<string> UploadPicture(StorageFile file)
