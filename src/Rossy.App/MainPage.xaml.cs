@@ -83,11 +83,24 @@ namespace Rossy.App
 
         private async void btnListen_Click(object sender, RoutedEventArgs e)
         {
-            bool permissionGained = await AudioCapturePermissions.RequestMicrophonePermission();
+            //bool permissionGained = await AudioCapturePermissions.RequestMicrophonePermission();
+            //txtUtterance.Text = "(listening...)";
+            //var modem = new Modem(AppConfiguration.ModemConfig);
+            //var utterance = modem.Listen();
+            //txtUtterance.Text = utterance.Item1;
+            var sourceLanguageConfigs = new SourceLanguageConfig[]
+            {
+                SourceLanguageConfig.FromLanguage("en-US"),
+                SourceLanguageConfig.FromLanguage("it-IT")
+            };
+            var config = SpeechTranslationConfig.FromSubscription(AppConfiguration.ModemConfig.Key, AppConfiguration.ModemConfig.Region);
+            var autoDetectSourceLanguageConfig = AutoDetectSourceLanguageConfig.FromSourceLanguageConfigs(
+                                                    sourceLanguageConfigs);
+
+            using var recognizer = new SpeechRecognizer(config, autoDetectSourceLanguageConfig);
             txtUtterance.Text = "(listening...)";
-            var modem = new Modem(AppConfiguration.ModemConfig);
-            var utterance = modem.Listen();
-            txtUtterance.Text = utterance.Item1;
+            var result = await recognizer.RecognizeOnceAsync();
+            txtUtterance.Text = result.Text;
         }
 
         private async void btnPickFile_Click(object sender, RoutedEventArgs e)
