@@ -87,7 +87,8 @@ namespace Rossy.App
             bool permissionGained = await AudioCapturePermissions.RequestMicrophonePermission();
             if(!permissionGained)
             {
-                var speech = await modem.ProduceSpeechAsync("Could not enable the microphone, please try again");
+                var ssml = await Modem.BuildSsmlAsync("Could not enable the microphone, please try again.", "en");
+                var speech = await modem.ProduceSpeechAsync(ssml);
                 Play(speech);
             }
             else
@@ -101,7 +102,8 @@ namespace Rossy.App
                         break;
                     case ResultReason.NoMatch:
                     default:
-                        var speech = await modem.ProduceSpeechAsync("Could not understand utterance, please try again.");
+                        var ssml = await Modem.BuildSsmlAsync("Could not understand utterance, please try again.", "en");
+                        var speech = await modem.ProduceSpeechAsync(ssml);
                         Play(speech);
                         break;
                 }

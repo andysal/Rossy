@@ -1,4 +1,5 @@
-﻿using Microsoft.CognitiveServices.Speech;
+﻿using Kevsoft.Ssml;
+using Microsoft.CognitiveServices.Speech;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -48,6 +49,19 @@ namespace Rossy
             public string Region { get; set; }
         }
 
-
+        public static async Task<string> BuildSsmlAsync(string text, string language)
+        {
+            var voice = language switch
+            {
+                "en" => "en-US-GuyNeural",
+                "it" => "it-IT-ElsaNeural",
+                _ => "en-US-GuyNeural"
+            };
+            var ssml = await new Ssml()
+                .Say(text)
+                .AsVoice(voice)
+                .ToStringAsync();
+            return ssml;
+        }
     }
 }
