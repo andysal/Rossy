@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Rossy
 {
@@ -14,36 +15,30 @@ namespace Rossy
             Config = configuration ?? throw new ArgumentNullException(nameof(configuration));
         }
 
-        public SpeechSynthesisResult ProduceSpeech(string story)
+        public async Task<SpeechSynthesisResult> ProduceSpeechAsync(string story)
         {
             var config = SpeechConfig.FromSubscription(Config.Key, Config.Region);
-            using (var synthesizer = new SpeechSynthesizer(config))
-            {
-                return synthesizer.SpeakSsmlAsync(story).Result;
-            }
+            using var synthesizer = new SpeechSynthesizer(config);
+            return await synthesizer.SpeakSsmlAsync(story);
         }
 
-        public (string, string) Listen()
+        public (ResultReason, string) Listen()
         {
             var sourceLanguageConfigs = new SourceLanguageConfig[]
             {
-                SourceLanguageConfig.FromLanguage("en-US"),
-                SourceLanguageConfig.FromLanguage("it-IT")
+                            SourceLanguageConfig.FromLanguage("en-US"),
+                            SourceLanguageConfig.FromLanguage("it-IT")
             };
-            var autoDetectSourceLanguageConfig = AutoDetectSourceLanguageConfig.FromSourceLanguageConfigs(
-                                                    sourceLanguageConfigs);
-
             var config = SpeechTranslationConfig.FromSubscription(Config.Key, Config.Region);
-            var recognizer = new SpeechRecognizer(config);
-            var result = recognizer.RecognizeOnceAsync().Result;
+            var autoDetectSourceLanguageConfig = AutoDetectSourceLanguageConfig.FromSourceLanguageConfigs(sourceLanguageConfigs);
 
-            if (result.Reason == ResultReason.RecognizedSpeech)
+            using var recognizer = new SpeechRecognizer(config, autoDetectSourceLanguageConfig);
+            var result = recognizer.RecognizeOnceAsync().Result;
+            return result.Reason switch
             {
-                var autoDetectSourceLanguageResult = AutoDetectSourceLanguageResult.FromResult(result).Language;
-                return (result.Text, autoDetectSourceLanguageResult);
-            }
-            else
-                return ("Speech could not be recognized", null);
+                ResultReason.RecognizingSpeech => (ResultReason.RecognizingSpeech, result.Text),
+                _ => (ResultReason.NoMatch, null)
+            };
         }
 
         public class Configuration

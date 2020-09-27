@@ -1,12 +1,13 @@
 ﻿using System;
 using System.IO;
+using System.Threading.Tasks;
 using Rossy.IO;
 
 namespace Rossy.Runner
 {
     class Program
     {
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
             var config = new AppConfig().GetConfig();
 
@@ -24,7 +25,7 @@ namespace Rossy.Runner
                 Geordi.AnalysisResult response = analyzer.Analyze(blobUrl, utterance);
 
                 var modem = new Modem(config.ModemConfig);
-                modem.ProduceSpeech(response.Result);
+                await modem.ProduceSpeechAsync(response.Result);
 
                 Console.WriteLine(response.Log);
 

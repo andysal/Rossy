@@ -74,7 +74,7 @@ namespace Rossy.App
             Geordi.AnalysisResult response = analyzer.Analyze(blobUrl, utterance);
            
             var modem = new Modem(AppConfiguration.ModemConfig);
-            var result = modem.ProduceSpeech(response.Result);
+            var result = await modem.ProduceSpeechAsync(response.Result);
             Play(result);
 
             txtAnalysisResult.Text = response.Log;
@@ -83,24 +83,29 @@ namespace Rossy.App
 
         private async void btnListen_Click(object sender, RoutedEventArgs e)
         {
-            //bool permissionGained = await AudioCapturePermissions.RequestMicrophonePermission();
-            //txtUtterance.Text = "(listening...)";
-            //var modem = new Modem(AppConfiguration.ModemConfig);
-            //var utterance = modem.Listen();
-            //txtUtterance.Text = utterance.Item1;
-            var sourceLanguageConfigs = new SourceLanguageConfig[]
+            var modem = new Modem(AppConfiguration.ModemConfig);
+            bool permissionGained = await AudioCapturePermissions.RequestMicrophonePermission();
+            if(!permissionGained)
             {
-                SourceLanguageConfig.FromLanguage("en-US"),
-                SourceLanguageConfig.FromLanguage("it-IT")
-            };
-            var config = SpeechTranslationConfig.FromSubscription(AppConfiguration.ModemConfig.Key, AppConfiguration.ModemConfig.Region);
-            var autoDetectSourceLanguageConfig = AutoDetectSourceLanguageConfig.FromSourceLanguageConfigs(
-                                                    sourceLanguageConfigs);
-
-            using var recognizer = new SpeechRecognizer(config, autoDetectSourceLanguageConfig);
-            txtUtterance.Text = "(listening...)";
-            var result = await recognizer.RecognizeOnceAsync();
-            txtUtterance.Text = result.Text;
+                var speech = await modem.ProduceSpeechAsync("Could not enable the microphone, please try again");
+                Play(speech);
+            }
+            else
+            {
+                txtUtterance.Text = "(listening...)";
+                var utterance = modem.Listen();
+                switch(utterance.Item1)
+                {
+                    case ResultReason.RecognizedSpeech:
+                        txtUtterance.Text = utterance.Item2;
+                        break;
+                    case ResultReason.NoMatch:
+                    default:
+                        var speech = await modem.ProduceSpeechAsync("Could not understand utterance, please try again.");
+                        Play(speech);
+                        break;
+                }
+            }
         }
 
         private async void btnPickFile_Click(object sender, RoutedEventArgs e)

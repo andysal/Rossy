@@ -27,31 +27,22 @@ namespace Rossy
             
             string log = analyzer.ProduceLog(imageAnalysis);
             var language = rosetta.GuessLanguage(utterance);
-            string speechText;
-            switch (language)
+            string speechText = language switch
             {
-                case "it":
-                    speechText = analyzer.ProduceSpeechTextItalian(imageAnalysis);
-                    break;
-                case "en":
-                default:
-                    speechText = analyzer.ProduceSpeechTextEnglish(imageAnalysis);
-                    break;
-            }
-
+                "it" => analyzer.ProduceSpeechTextItalian(imageAnalysis),
+                "en" => analyzer.ProduceSpeechTextEnglish(imageAnalysis),
+                _ => analyzer.ProduceSpeechTextEnglish(imageAnalysis)
+            };
             return new AnalysisResult(speechText, log);
         }
 
         private IAnalyzer GetAnalyzer(string intent)
         {
-            switch (intent)
+            return intent switch
             {
-                case "People":
-                    return new PeopleAnalysis();
-                case "FullScan":
-                default:
-                    return new FullScanAnalysis();
-            }
+                "People" => new PeopleAnalysis(),
+                _ => new FullScanAnalysis(),
+            };
         }
 
         public class Configuration

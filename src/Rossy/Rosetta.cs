@@ -43,14 +43,11 @@ namespace Rossy
 
         private string GetAppId(string language)
         {
-            switch(language)
+            return language switch
             {
-                case "it":
-                    return Config.AppIdIT;
-                case "en":
-                default:
-                    return Config.AppIdEN;
-            }
+                "it" => Config.AppIdIT,
+                _ => Config.AppIdEN,
+            };
         }
 
         private PredictionResponse GetPrediction(string utterance)
@@ -58,32 +55,30 @@ namespace Rossy
             var language = GuessLanguage(utterance);
             var appId = GetAppId(language);
             var credentials = new ApiKeyServiceClientCredentials(Config.PredictionKey);
-            using (var luisClient = new LUISRuntimeClient(credentials, new System.Net.Http.DelegatingHandler[] { })
-                                            {
-                                                Endpoint = Config.Endpoint
-                                            })
+            using var luisClient = new LUISRuntimeClient(credentials, new System.Net.Http.DelegatingHandler[] { })
             {
-                var requestOptions = new PredictionRequestOptions
-                {
-                    DatetimeReference = DateTime.Now, //DateTime.Parse("2019-01-01"),
-                    PreferExternalEntities = true
-                };
+                Endpoint = Config.Endpoint
+            };
+            var requestOptions = new PredictionRequestOptions
+            {
+                DatetimeReference = DateTime.Now, //DateTime.Parse("2019-01-01"),
+                PreferExternalEntities = true
+            };
 
-                var predictionRequest = new PredictionRequest
-                {
-                    Query = utterance,
-                    Options = requestOptions
-                };
+            var predictionRequest = new PredictionRequest
+            {
+                Query = utterance,
+                Options = requestOptions
+            };
 
-                // get prediction
-                return luisClient.Prediction.GetSlotPredictionAsync(
-                    Guid.Parse(appId),
-                    slotName: "staging",
-                    predictionRequest,
-                    verbose: true,
-                    showAllIntents: true,
-                    log: true).Result;
-            }
+            // get prediction
+            return luisClient.Prediction.GetSlotPredictionAsync(
+                Guid.Parse(appId),
+                slotName: "staging",
+                predictionRequest,
+                verbose: true,
+                showAllIntents: true,
+                log: true).Result;
         }
 
         public class Configuration
