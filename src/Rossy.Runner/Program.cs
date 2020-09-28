@@ -22,7 +22,7 @@ namespace Rossy.Runner
                 fileStream.Dispose();
 
                 var analyzer = new Geordi(config);
-                Geordi.AnalysisResult response = analyzer.Analyze(blobUrl, utterance);
+                Geordi.AnalysisResult response = await analyzer.AnalyzeAsync(blobUrl, utterance);
 
                 var modem = new Modem(config.ModemConfig);
                 await modem.ProduceSpeechAsync(response.Result);

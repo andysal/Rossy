@@ -3,6 +3,7 @@ using Microsoft.Azure.CognitiveServices.Vision.ComputerVision.Models;
 using System;
 using System.Collections.Generic;
 using Rossy.Analyzers;
+using System.Threading.Tasks;
 
 namespace Rossy
 {
@@ -15,7 +16,7 @@ namespace Rossy
             RossyConfig = rossyConfiguration ?? throw new ArgumentNullException(nameof(rossyConfiguration));
         }
 
-        public AnalysisResult Analyze(string imageUrl, string utterance)
+        public async Task<AnalysisResult> AnalyzeAsync(string imageUrl, string utterance)
         {
             var rosetta = new Rosetta(RossyConfig.RosettaConfig);
             var intent = rosetta.GuessIntent(utterance);
@@ -23,7 +24,7 @@ namespace Rossy
             List<VisualFeatureTypes> features = analyzer.SetupAnalysisFeatures();
 
             var client = new ComputerVisionClient(new ApiKeyServiceClientCredentials(RossyConfig.GeordiConfig.SubscriptionKey)) { Endpoint = RossyConfig.GeordiConfig.Endpoint };
-            ImageAnalysis imageAnalysis = client.AnalyzeImageAsync(imageUrl, features).Result;
+            ImageAnalysis imageAnalysis = await client.AnalyzeImageAsync(imageUrl, features);
             
             string log = analyzer.ProduceLog(imageAnalysis);
             var language = rosetta.GuessLanguage(utterance);
