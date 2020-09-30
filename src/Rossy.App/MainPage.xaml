@@ -11,16 +11,24 @@
 
     <Grid>
         <StackPanel Orientation="Vertical">
+            <StackPanel.Resources>
+                <Style TargetType="Button">
+                    <Setter Property="Margin" Value="2,2,2,2"/>
+                </Style>                    
+                <Style TargetType="TextBox">
+                    <Setter Property="Margin" Value="2,2,2,2"/>
+                </Style>
+            </StackPanel.Resources>
             <StackPanel Orientation="Horizontal">
                 <TextBox Name="txtFilePath" HorizontalAlignment="Left" Text="TextBox" TextWrapping="Wrap" VerticalAlignment="Top" Width="500" />
                 <Button Name="btnPickFile" Content="Pick" VerticalAlignment="Top" Click="btnPickFile_Click" />
                 <Button Name="btnTakePicture" Content="Take" VerticalAlignment="Top" Click="btnTakePicture_Click" />
+                <Button Name="btnAnalyze" Content="Analyze" VerticalAlignment="Top" Click="btnAnalyze_Click"/>                
             </StackPanel>
             <StackPanel Orientation="Horizontal">
                 <TextBox Name="txtUtterance" HorizontalAlignment="Left" Text="TextBox" TextWrapping="Wrap" VerticalAlignment="Top" Width="500" />
                 <Button Name="btnListen" Content="Listen" VerticalAlignment="Top" Click="btnListen_Click" />
             </StackPanel>
-            <Button Name="btnAnalyze" Content="Analyze" VerticalAlignment="Top" Click="btnAnalyze_Click"/>
             <controls:TabView HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                 <controls:TabViewItem Header="Photo">
                     <StackPanel>
@@ -31,6 +39,11 @@
                     <ScrollViewer VerticalScrollMode="Auto" VerticalScrollBarVisibility="Auto">
                         <TextBlock Name="txtAnalysisResult" HorizontalAlignment="Left" TextWrapping="WrapWholeWords" Width="800" Height="800" />
                     </ScrollViewer>
+                </controls:TabViewItem>
+                <controls:TabViewItem Header="Options">
+                    <StackPanel>
+                        <ComboBox />
+                    </StackPanel>
                 </controls:TabViewItem>
             </controls:TabView>
         </StackPanel>

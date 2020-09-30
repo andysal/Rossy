@@ -48,7 +48,7 @@ namespace Rossy.App
                 var speech = await modem.ProduceSpeechAsync(ssml);
                 Play(speech);
             }
-            if (!string.IsNullOrWhiteSpace(txtUtterance.Text))
+            if (string.IsNullOrWhiteSpace(txtUtterance.Text))
                 txtUtterance.Text = "what's up?";
 
             string blobUrl = txtFilePath.Text;
@@ -81,7 +81,7 @@ namespace Rossy.App
             {
                 txtUtterance.Text = "(listening...)";
                 var modem = new Modem(AppConfiguration.ModemConfig);
-                var utterance = modem.Listen();
+                var utterance = await modem.ListenAsync();
                 switch(utterance.Item1)
                 {
                     case ResultReason.RecognizedSpeech:

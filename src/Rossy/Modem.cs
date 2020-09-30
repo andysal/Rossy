@@ -23,21 +23,21 @@ namespace Rossy
             return await synthesizer.SpeakSsmlAsync(story);
         }
 
-        public (ResultReason, string) Listen()
+        public async Task<(ResultReason, string)> ListenAsync()
         {
             var sourceLanguageConfigs = new SourceLanguageConfig[]
             {
-                            SourceLanguageConfig.FromLanguage("en-US"),
-                            SourceLanguageConfig.FromLanguage("it-IT")
+                SourceLanguageConfig.FromLanguage("en-US"),
+                SourceLanguageConfig.FromLanguage("it-IT")
             };
             var config = SpeechTranslationConfig.FromSubscription(Config.Key, Config.Region);
             var autoDetectSourceLanguageConfig = AutoDetectSourceLanguageConfig.FromSourceLanguageConfigs(sourceLanguageConfigs);
 
             using var recognizer = new SpeechRecognizer(config, autoDetectSourceLanguageConfig);
-            var result = recognizer.RecognizeOnceAsync().Result;
+            var result = await recognizer.RecognizeOnceAsync();
             return result.Reason switch
             {
-                ResultReason.RecognizingSpeech => (ResultReason.RecognizingSpeech, result.Text),
+                ResultReason.RecognizedSpeech => (ResultReason.RecognizedSpeech, result.Text),
                 _ => (ResultReason.NoMatch, null)
             };
         }
