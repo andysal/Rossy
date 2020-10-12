@@ -32,7 +32,7 @@
             <controls:TabView HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                 <controls:TabViewItem Header="Photo">
                     <StackPanel>
-                        <Image x:Name="imgPhoto" Stretch="None" />
+                        <Image x:Name="imgPhoto" Stretch="Fill" />
                     </StackPanel>
                 </controls:TabViewItem>
                 <controls:TabViewItem Header="Log">

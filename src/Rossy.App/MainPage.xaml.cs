@@ -65,6 +65,8 @@ namespace Rossy.App
 
             txtAnalysisResult.Text = response.Log;
             DeletePicture(blobUrl);
+
+            txtFilePath.Text = "";
         }
 
         private async void btnListen_Click(object sender, RoutedEventArgs e)
