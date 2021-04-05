@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Configuration;
-using Rossy.IO;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -31,8 +30,7 @@ namespace Rossy.Runner
             {
                 ModemConfig = GetSection<Modem.Configuration>(nameof(Modem)),
                 RosettaConfig = GetSection<Rosetta.Configuration>(nameof(Rosetta)),
-                GeordiConfig = GetSection<Geordi.Configuration>(nameof(Geordi)),
-                StorageConfig = GetSection<Storage.Configuration>(nameof(Storage))
+                GeordiConfig = GetSection<Geordi.Configuration>(nameof(Geordi))
             };
             return config;
         }

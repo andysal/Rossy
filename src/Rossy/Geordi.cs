@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using Rossy.Analyzers;
 using System.Threading.Tasks;
+using System.IO;
 
 namespace Rossy
 {
@@ -16,7 +17,7 @@ namespace Rossy
             RossyConfig = rossyConfiguration ?? throw new ArgumentNullException(nameof(rossyConfiguration));
         }
 
-        public async Task<AnalysisResult> AnalyzeAsync(string imageUrl, string utterance)
+        public async Task<AnalysisResult> AnalyzeAsync(Stream image, string utterance)
         {
             var rosetta = new Rosetta(RossyConfig.RosettaConfig);
             var intent = rosetta.GuessIntent(utterance);
@@ -24,7 +25,7 @@ namespace Rossy
             List<VisualFeatureTypes?> features = analyzer.SetupAnalysisFeatures();
 
             var client = new ComputerVisionClient(new ApiKeyServiceClientCredentials(RossyConfig.GeordiConfig.SubscriptionKey)) { Endpoint = RossyConfig.GeordiConfig.Endpoint };
-            ImageAnalysis imageAnalysis = await client.AnalyzeImageAsync(imageUrl, features);
+            ImageAnalysis imageAnalysis = await client.AnalyzeImageInStreamAsync(image, features);
             
             string log = analyzer.ProduceLog(imageAnalysis);
             var language = rosetta.GuessLanguage(utterance);

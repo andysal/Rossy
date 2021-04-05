@@ -1,34 +1,23 @@
 ﻿using Microsoft.CognitiveServices.Speech;
-using Rossy.IO;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using System.Threading;
 using System.Threading.Tasks;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.Media.Capture;
 using Windows.Media.Core;
 using Windows.Media.Playback;
 using Windows.Storage;
 using Windows.Storage.Pickers;
-using Windows.Storage.Streams;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
-using Windows.UI.Xaml.Navigation;
 
 namespace Rossy.App
 {
     public sealed partial class MainPage : Page
     {
         private Configuration AppConfiguration { get; set; }
+        private StorageFile picture = null;
 
         public MainPage()
         {
@@ -42,31 +31,19 @@ namespace Rossy.App
         private async void btnAnalyze_Click(object sender, RoutedEventArgs e)
         {
             var modem = new Modem(AppConfiguration.ModemConfig);
-            if (string.IsNullOrWhiteSpace(txtFilePath.Text))
-            {
-                var ssml = await Modem.BuildSsmlAsync("Please, either upload or take a new picture.", "en");
-                var speech = await modem.ProduceSpeechAsync(ssml);
-                Play(speech);
-            }
             if (string.IsNullOrWhiteSpace(txtUtterance.Text))
                 txtUtterance.Text = "what's up?";
 
-            string blobUrl = txtFilePath.Text;
             var utterance = txtUtterance.Text;
-
-            var bitmapImage = new BitmapImage(new Uri(blobUrl, UriKind.Absolute));
-            imgPhoto.Source = bitmapImage;
+            var stream = await picture.OpenAsync(FileAccessMode.Read);
 
             var analyzer = new Geordi(AppConfiguration);
-            Geordi.AnalysisResult response = await analyzer.AnalyzeAsync(blobUrl, utterance);          
+            Geordi.AnalysisResult response = await analyzer.AnalyzeAsync(stream.AsStream(), utterance);          
 
             var result = await modem.ProduceSpeechAsync(response.Result);
             Play(result);
 
             txtAnalysisResult.Text = response.Log;
-            DeletePicture(blobUrl);
-
-            txtFilePath.Text = "";
         }
 
         private async void btnListen_Click(object sender, RoutedEventArgs e)
@@ -112,36 +89,15 @@ namespace Rossy.App
             filePicker.FileTypeFilter.Add(".jfif");
             filePicker.FileTypeFilter.Add(".png");
 
-            StorageFile file = await filePicker.PickSingleFileAsync();
-            if (file != null)
-            {
-                var blobUrl = await UploadPicture(file);
-                txtFilePath.Text = blobUrl;
-            }
+            picture = await filePicker.PickSingleFileAsync();
+            imgPhoto.Source = await GetBitmapFromStorageFile(picture);
         }
 
         private async void btnTakePicture_Click(object sender, RoutedEventArgs e)
         {
             var dialog = new CameraCaptureUI();
-            var file = await dialog.CaptureFileAsync(CameraCaptureUIMode.Photo);
-            var blobUrl = await UploadPicture(file);
-            txtFilePath.Text = blobUrl;
-        }
-
-        private async Task<string> UploadPicture(StorageFile file)
-        {
-            var randomAccessStream = await file.OpenReadAsync();
-            using Stream stream = randomAccessStream.AsStreamForRead();
-            var storageManager = new Storage(AppConfiguration.StorageConfig);
-            var blobUrl = storageManager.UploadFile(stream, file.FileType);
-            return blobUrl;
-        }
-
-        private void DeletePicture(string blobUrl)
-        {
-            var storageManager = new Storage(AppConfiguration.StorageConfig);
-            var blobUri = new Uri(blobUrl);
-            storageManager.DeleteFile(blobUri);
+            picture = await dialog.CaptureFileAsync(CameraCaptureUIMode.Photo);
+            imgPhoto.Source = await GetBitmapFromStorageFile(picture);
         }
 
         private async void Play(SpeechSynthesisResult speech)
@@ -162,6 +118,14 @@ namespace Rossy.App
             //};
             mediaPlayer.Source = MediaSource.CreateFromStorageFile(await StorageFile.GetFileFromPathAsync(filePath));
             mediaPlayer.Play();
+        }
+
+        private static async Task<ImageSource> GetBitmapFromStorageFile(StorageFile sf)
+        {
+            using var randomAccessStream = await sf.OpenAsync(FileAccessMode.Read);
+            var result = new BitmapImage();
+            await result.SetSourceAsync(randomAccessStream);
+            return result;
         }
     }
 }
