@@ -13,6 +13,6 @@
 		<PackageReference Include="Microsoft.CognitiveServices.Speech" Version="1.16.0" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
 		<PackageReference Include="SSML" Version="2.0.0" />
-		<PackageReference Include="System.Configuration.ConfigurationManager" Version="4.7.0" />
+		<PackageReference Include="System.Configuration.ConfigurationManager" Version="5.0.0" />
 	</ItemGroup>
 </Project>
