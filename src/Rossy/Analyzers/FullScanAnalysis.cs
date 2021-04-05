@@ -8,9 +8,9 @@ namespace Rossy.Analyzers
 {
     public class FullScanAnalysis : IAnalyzer
     {
-        public List<VisualFeatureTypes> SetupAnalysisFeatures()
+        public List<VisualFeatureTypes?> SetupAnalysisFeatures()
         {
-            List<VisualFeatureTypes> features = new List<VisualFeatureTypes>()
+            var features = new List<VisualFeatureTypes?>()
             {
                 VisualFeatureTypes.Categories, VisualFeatureTypes.Description,
                 VisualFeatureTypes.Faces, VisualFeatureTypes.ImageType,

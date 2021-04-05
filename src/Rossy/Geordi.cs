@@ -21,7 +21,7 @@ namespace Rossy
             var rosetta = new Rosetta(RossyConfig.RosettaConfig);
             var intent = rosetta.GuessIntent(utterance);
             var analyzer = GetAnalyzer(intent);
-            List<VisualFeatureTypes> features = analyzer.SetupAnalysisFeatures();
+            List<VisualFeatureTypes?> features = analyzer.SetupAnalysisFeatures();
 
             var client = new ComputerVisionClient(new ApiKeyServiceClientCredentials(RossyConfig.GeordiConfig.SubscriptionKey)) { Endpoint = RossyConfig.GeordiConfig.Endpoint };
             ImageAnalysis imageAnalysis = await client.AnalyzeImageAsync(imageUrl, features);

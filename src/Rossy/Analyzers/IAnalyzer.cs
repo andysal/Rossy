@@ -7,7 +7,7 @@ namespace Rossy.Analyzers
 {
     public interface IAnalyzer
     {
-        List<VisualFeatureTypes> SetupAnalysisFeatures();
+        List<VisualFeatureTypes?> SetupAnalysisFeatures();
         string ProduceLog(ImageAnalysis imageAnalysis);
         string ProduceSpeechTextEnglish(ImageAnalysis imageAnalysis);
         string ProduceSpeechTextItalian(ImageAnalysis imageAnalysis);

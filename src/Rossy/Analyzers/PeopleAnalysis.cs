@@ -8,10 +8,10 @@ namespace Rossy.Analyzers
 {
     public class PeopleAnalysis : IAnalyzer
     {
-        public List<VisualFeatureTypes> SetupAnalysisFeatures()
+        public List<VisualFeatureTypes?> SetupAnalysisFeatures()
         {
             // Creating a list that defines the features to be extracted from the image. 
-            List<VisualFeatureTypes> features = new List<VisualFeatureTypes>()
+            var features = new List<VisualFeatureTypes?>()
             {
                 VisualFeatureTypes.Categories, VisualFeatureTypes.Description,
                 VisualFeatureTypes.Faces, VisualFeatureTypes.ImageType,
