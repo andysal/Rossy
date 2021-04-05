@@ -24,22 +24,18 @@ namespace Rossy.App
             this.InitializeComponent();
             AppConfiguration = new AppConfig().GetConfig();
 
-            txtFilePath.Text = "";
             txtUtterance.Text = "what's up?";
         }
 
         private async void btnAnalyze_Click(object sender, RoutedEventArgs e)
         {
-            var modem = new Modem(AppConfiguration.ModemConfig);
-            if (string.IsNullOrWhiteSpace(txtUtterance.Text))
-                txtUtterance.Text = "what's up?";
-
-            var utterance = txtUtterance.Text;
-            var stream = await picture.OpenAsync(FileAccessMode.Read);
+            var utterance = string.IsNullOrWhiteSpace(txtUtterance.Text) ? "what's up?" : txtUtterance.Text;
 
             var analyzer = new Geordi(AppConfiguration);
+            var stream = await picture.OpenAsync(FileAccessMode.Read);
             Geordi.AnalysisResult response = await analyzer.AnalyzeAsync(stream.AsStream(), utterance);          
 
+            var modem = new Modem(AppConfiguration.ModemConfig);
             var result = await modem.ProduceSpeechAsync(response.Result);
             Play(result);
 
