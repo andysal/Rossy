@@ -1,13 +1,8 @@
-﻿using Microsoft.Azure.CognitiveServices.Language.LUIS.Runtime;
+﻿using System;
+using Azure;
+using Azure.AI.TextAnalytics;
+using Microsoft.Azure.CognitiveServices.Language.LUIS.Runtime;
 using Microsoft.Azure.CognitiveServices.Language.LUIS.Runtime.Models;
-using Microsoft.Azure.CognitiveServices.Language.TextAnalytics;
-using Microsoft.Rest;
-using System;
-using System.Collections.Generic;
-using System.Net.Http;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Rossy
 {
@@ -28,17 +23,15 @@ namespace Rossy
 
         public string GuessLanguage(string utterance)
         {
-            var credentials = new ApiKeyServiceClientCredentials(Config.TextAnalysisSubscriptionKey);
+            var endpoint = new Uri(Config.TextAnalysisEndpoint);
+            var credentials = new AzureKeyCredential(Config.TextAnalysisSubscriptionKey);
             
-            var client = new TextAnalyticsClient(credentials)
-            {
-                Endpoint = Config.TextAnalysisEndpoint
-            };
-            var result = client.DetectLanguage(utterance, "");
-            if(result.DetectedLanguages==null || result.DetectedLanguages.Count == 0)
+            var client = new TextAnalyticsClient(endpoint, credentials);
+            DetectedLanguage result = client.DetectLanguage(utterance, "");
+            if(string.IsNullOrWhiteSpace(result.Name))
                 return "en";
             else
-                return result.DetectedLanguages[0].Iso6391Name;
+                return result.Iso6391Name;
         }
 
         private string GetAppId(string language)
