@@ -24,6 +24,7 @@ namespace Rossy.App
 
         private T GetSection<T>(string key) => _configurationRoot.GetSection(key).Get<T>();
 
+
         public Configuration GetConfig()
         {
             var config = new Configuration()
