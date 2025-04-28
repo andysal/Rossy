@@ -13,8 +13,8 @@ namespace Rossy.Analyzers
         VisualFeatures SetupImageAnalysisFeatures();
         IEnumerable<FaceAttributeType> SetupFaceAttributes();
 
-        string ProduceLog(ImageAnalysisResult imageAnalysis, IReadOnlyList<FaceDetectionResult> detectedFaces);
-        string ProduceSpeechTextEnglish(ImageAnalysisResult imageAnalysis, IReadOnlyList<FaceDetectionResult> detectedFaces);
-        string ProduceSpeechTextItalian(ImageAnalysisResult imageAnalysis, IReadOnlyList<FaceDetectionResult> detectedFaces);
+        string ProduceLog(ImageAnalysisResult imageAnalysis, IEnumerable<FaceDetectionResult> detectedFaces);
+        string ProduceSpeechTextEnglish(ImageAnalysisResult imageAnalysis, IEnumerable<FaceDetectionResult> detectedFaces);
+        string ProduceSpeechTextItalian(ImageAnalysisResult imageAnalysis, IEnumerable<FaceDetectionResult> detectedFaces);
     }
 }

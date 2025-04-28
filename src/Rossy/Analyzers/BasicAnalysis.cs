@@ -35,7 +35,7 @@ namespace Rossy.Analyzers
             return requiredFaceAttributes;
         }
 
-        public string ProduceLog(ImageAnalysisResult imageAnalysis, IReadOnlyList<FaceDetectionResult> detectedFaces)
+        public string ProduceLog(ImageAnalysisResult imageAnalysis, IEnumerable<FaceDetectionResult> detectedFaces)
         {
             var logBuilder = new StringBuilder();
             logBuilder.Append("----------------------------------------------------------\n");
@@ -77,13 +77,13 @@ namespace Rossy.Analyzers
             return logBuilder.ToString();
         }
 
-        public string ProduceSpeechTextEnglish(ImageAnalysisResult imageAnalysis, IReadOnlyList<FaceDetectionResult> detectedFaces)
+        public string ProduceSpeechTextEnglish(ImageAnalysisResult imageAnalysis, IEnumerable<FaceDetectionResult> detectedFaces)
         {
             var ssml = Modem.BuildSsmlAsync(imageAnalysis.Caption.Text, "en").Result;
             return ssml;
         }
 
-        public string ProduceSpeechTextItalian(ImageAnalysisResult imageAnalysis, IReadOnlyList<FaceDetectionResult> detectedFaces)
+        public string ProduceSpeechTextItalian(ImageAnalysisResult imageAnalysis, IEnumerable<FaceDetectionResult> detectedFaces)
         {
             var ssml = Modem.BuildSsmlAsync(imageAnalysis.Caption.Text, "it").Result;
             return ssml;

@@ -13,7 +13,6 @@ namespace Rossy.Analyzers
     {
         public VisualFeatures SetupImageAnalysisFeatures()
         {
-            // Creating a list that defines the features to be extracted from the image. 
             var features = 
                 VisualFeatures.Caption | VisualFeatures.DenseCaptions |
                 VisualFeatures.People | VisualFeatures.Tags;
@@ -34,7 +33,7 @@ namespace Rossy.Analyzers
             return requiredFaceAttributes;
         }
 
-        public string ProduceLog(ImageAnalysisResult imageAnalysis, IReadOnlyList<FaceDetectionResult> detectedFaces)
+        public string ProduceLog(ImageAnalysisResult imageAnalysis, IEnumerable<FaceDetectionResult> detectedFaces)
         {
             var logBuilder = new StringBuilder();
 
@@ -61,19 +60,19 @@ namespace Rossy.Analyzers
             return logBuilder.ToString();
         }
 
-        public string ProduceSpeechTextEnglish(ImageAnalysisResult imageAnalysis, IReadOnlyList<FaceDetectionResult> detectedFaces)
+        public string ProduceSpeechTextEnglish(ImageAnalysisResult imageAnalysis, IEnumerable<FaceDetectionResult> detectedFaces)
         {
             var resultBuilder = new StringBuilder();
-            if (detectedFaces.Count == 0)
+            if (detectedFaces.Count() == 0)
                 resultBuilder.Append("There are no people around");
-            else if (detectedFaces.Count == 1)
+            else if (detectedFaces.Count() == 1)
             {
                 var face = detectedFaces.First();
                 resultBuilder.Append($"There is one person of age {face.FaceAttributes.Age}.");
             }
             else
             {
-                resultBuilder.Append($"There are {detectedFaces.Count} people around. More in detail: ");
+                resultBuilder.Append($"There are {detectedFaces.Count()} people around. More in detail: ");
                 foreach (var face in detectedFaces)
                 {
                     resultBuilder.Append($"a person of age {face.FaceAttributes.Age}, ");
@@ -84,19 +83,19 @@ namespace Rossy.Analyzers
             return ssml;
         }
 
-        public string ProduceSpeechTextItalian(ImageAnalysisResult imageAnalysis, IReadOnlyList<FaceDetectionResult> detectedFaces)
+        public string ProduceSpeechTextItalian(ImageAnalysisResult imageAnalysis, IEnumerable<FaceDetectionResult> detectedFaces)
         {
             var resultBuilder = new StringBuilder();
-            if (detectedFaces.Count == 0)
+            if (detectedFaces.Count() == 0)
                 resultBuilder.Append("Non vedo persone");
-            else if (detectedFaces.Count == 1)
+            else if (detectedFaces.Count() == 1)
             {
                 var face = detectedFaces.First();
                 resultBuilder.Append($"C'è una persona che sembra avere un'età di {face.FaceAttributes.Age} anni.");
             }
             else
             {
-                resultBuilder.Append($"Ci sono {detectedFaces.Count} persone. Più precisamente: ");
+                resultBuilder.Append($"Ci sono {detectedFaces.Count()} persone. Più precisamente: ");
                 foreach (var face in detectedFaces)
                 {
                     resultBuilder.Append($"Una persona che sembra avere un'età di {face.FaceAttributes.Age} anni.");
