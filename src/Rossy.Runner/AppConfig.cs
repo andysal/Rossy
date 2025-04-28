@@ -30,7 +30,7 @@ namespace Rossy.Runner
             {
                 ModemConfig = GetSection<Modem.Configuration>(nameof(Modem)),
                 RosettaConfig = GetSection<Rosetta.Configuration>(nameof(Rosetta)),
-                GeordiConfig = GetSection<Geordi.Configuration>(nameof(Geordi))
+                ImageAnalysysServiceConfig = GetSection<Geordi.Configuration>(nameof(Geordi))
             };
             return config;
         }

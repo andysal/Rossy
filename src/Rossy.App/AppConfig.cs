@@ -31,8 +31,8 @@ namespace Rossy.App
             {
                 ModemConfig = GetSection<Modem.Configuration>(nameof(Modem)),
                 RosettaConfig = GetSection<Rosetta.Configuration>(nameof(Rosetta)),
-                FaceConfig = GetSection<Geordi.Configuration>("Face"),
-                GeordiConfig = GetSection<Geordi.Configuration>(nameof(Geordi))
+                FaceDetectionServiceConfig = GetSection<Geordi.Configuration>("Face"),
+                ImageAnalysysServiceConfig = GetSection<Geordi.Configuration>(nameof(Geordi))
             };
             return config;
         }

@@ -1,14 +1,11 @@
-﻿using Azure.AI.Vision;
+﻿using Azure;
 using Azure.AI.Vision.ImageAnalysis;
+using Azure.AI.Vision.Face;
+using Rossy.Analyzers;
 using System;
 using System.Collections.Generic;
-using Rossy.Analyzers;
 using System.Threading.Tasks;
 using System.IO;
-using Azure;
-using Azure.AI.Vision.Face;
-using System.Net;
-using Microsoft.Azure.CognitiveServices.Vision.ComputerVision.Models;
 
 namespace Rossy
 {
@@ -29,12 +26,12 @@ namespace Rossy
             var imageBinaryDaya = BinaryData.FromStream(image);
 
             var imageAnalysisFeatures = analyzer.SetupImageAnalysisFeatures();
-            var client = new ImageAnalysisClient(new Uri(RossyConfig.GeordiConfig.Endpoint), new AzureKeyCredential(RossyConfig.GeordiConfig.SubscriptionKey));
+            var client = new ImageAnalysisClient(new Uri(RossyConfig.ImageAnalysysServiceConfig.Endpoint), new AzureKeyCredential(RossyConfig.ImageAnalysysServiceConfig.SubscriptionKey));
             Response<ImageAnalysisResult> imageAnalysisResult = await client.AnalyzeAsync(imageBinaryDaya, imageAnalysisFeatures);
             var imageAnalysis = imageAnalysisResult.Value;
 
             var requiredFaceAttributes = analyzer.SetupFaceAttributes();
-            FaceClient faceClient = new FaceClient(new Uri(RossyConfig.FaceConfig.Endpoint), new AzureKeyCredential(RossyConfig.FaceConfig.SubscriptionKey));
+            FaceClient faceClient = new FaceClient(new Uri(RossyConfig.FaceDetectionServiceConfig.Endpoint), new AzureKeyCredential(RossyConfig.FaceDetectionServiceConfig.SubscriptionKey));
             var response = await faceClient.DetectAsync(imageBinaryDaya, FaceDetectionModel.Detection03, FaceRecognitionModel.Recognition04, true, returnFaceAttributes: requiredFaceAttributes);
             IReadOnlyList<FaceDetectionResult> detectedFaces = response.Value;
 
