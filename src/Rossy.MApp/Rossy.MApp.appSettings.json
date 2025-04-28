@@ -1,0 +1,25 @@
+﻿{
+  "Modem": {
+    "Endpoint": "",
+    "Key": "",
+    "Region": ""
+  },
+  "Rosetta": {
+    "TextAnalysisSubscriptionKey": "",
+    "TextAnalysisEndpoint": "",
+    "PredictionKey": "",
+    "Endpoint": "",
+    "AppIdEN": "",
+    "AppIdIT": ""
+  },
+  "Geordi": {
+    "ImageAnalysis": {
+      "SubscriptionKey": "",
+      "Endpoint": ""
+    },
+    "Face": {
+      "SubscriptionKey": "",
+      "Endpoint": ""
+    }
+  }
+}
