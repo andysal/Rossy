@@ -1,10 +1,14 @@
-﻿using Microsoft.Azure.CognitiveServices.Vision.ComputerVision;
-using Microsoft.Azure.CognitiveServices.Vision.ComputerVision.Models;
+﻿using Azure.AI.Vision;
+using Azure.AI.Vision.ImageAnalysis;
 using System;
 using System.Collections.Generic;
 using Rossy.Analyzers;
 using System.Threading.Tasks;
 using System.IO;
+using Azure;
+using Azure.AI.Vision.Face;
+using System.Net;
+using Microsoft.Azure.CognitiveServices.Vision.ComputerVision.Models;
 
 namespace Rossy
 {
@@ -22,18 +26,25 @@ namespace Rossy
             var rosetta = new Rosetta(RossyConfig.RosettaConfig);
             var intent = rosetta.GuessIntent(utterance);
             var analyzer = GetAnalyzer(intent);
-            List<VisualFeatureTypes?> features = analyzer.SetupAnalysisFeatures();
+            var imageBinaryDaya = BinaryData.FromStream(image);
 
-            var client = new ComputerVisionClient(new ApiKeyServiceClientCredentials(RossyConfig.GeordiConfig.SubscriptionKey)) { Endpoint = RossyConfig.GeordiConfig.Endpoint };
-            ImageAnalysis imageAnalysis = await client.AnalyzeImageInStreamAsync(image, features);
-            
-            string log = analyzer.ProduceLog(imageAnalysis);
+            var imageAnalysisFeatures = analyzer.SetupImageAnalysisFeatures();
+            var client = new ImageAnalysisClient(new Uri(RossyConfig.GeordiConfig.Endpoint), new AzureKeyCredential(RossyConfig.GeordiConfig.SubscriptionKey));
+            Response<ImageAnalysisResult> imageAnalysisResult = await client.AnalyzeAsync(imageBinaryDaya, imageAnalysisFeatures);
+            var imageAnalysis = imageAnalysisResult.Value;
+
+            var requiredFaceAttributes = analyzer.SetupFaceAttributes();
+            FaceClient faceClient = new FaceClient(new Uri(RossyConfig.FaceConfig.Endpoint), new AzureKeyCredential(RossyConfig.FaceConfig.SubscriptionKey));
+            var response = await faceClient.DetectAsync(imageBinaryDaya, FaceDetectionModel.Detection03, FaceRecognitionModel.Recognition04, true, returnFaceAttributes: requiredFaceAttributes);
+            IReadOnlyList<FaceDetectionResult> detectedFaces = response.Value;
+
+            string log = analyzer.ProduceLog(imageAnalysis, detectedFaces);
             var language = rosetta.GuessLanguage(utterance);
             string speechText = language switch
             {
-                "it" => analyzer.ProduceSpeechTextItalian(imageAnalysis),
-                "en" => analyzer.ProduceSpeechTextEnglish(imageAnalysis),
-                _ => analyzer.ProduceSpeechTextEnglish(imageAnalysis)
+                "it" => analyzer.ProduceSpeechTextItalian(imageAnalysis, detectedFaces),
+                "en" => analyzer.ProduceSpeechTextEnglish(imageAnalysis, detectedFaces),
+                _ => analyzer.ProduceSpeechTextEnglish(imageAnalysis, detectedFaces)
             };
             return new AnalysisResult(speechText, log);
         }
@@ -43,7 +54,7 @@ namespace Rossy
             return intent switch
             {
                 "People" => new PeopleAnalysis(),
-                _ => new FullScanAnalysis(),
+                _ => new BasicAnalysis(),
             };
         }
 

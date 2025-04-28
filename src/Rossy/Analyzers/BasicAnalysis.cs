@@ -9,14 +9,15 @@ using System.Text;
 
 namespace Rossy.Analyzers
 {
-    public class PeopleAnalysis : IAnalyzer
+    public class BasicAnalysis : IAnalyzer
     {
         public VisualFeatures SetupImageAnalysisFeatures()
         {
-            // Creating a list that defines the features to be extracted from the image. 
-            var features = 
+            var features =
                 VisualFeatures.Caption | VisualFeatures.DenseCaptions |
-                VisualFeatures.People | VisualFeatures.Tags;
+                VisualFeatures.Objects | VisualFeatures.People |
+                VisualFeatures.Read | VisualFeatures.SmartCrops |
+                VisualFeatures.Tags;
 
             return features;
         }
@@ -37,15 +38,29 @@ namespace Rossy.Analyzers
         public string ProduceLog(ImageAnalysisResult imageAnalysis, IReadOnlyList<FaceDetectionResult> detectedFaces)
         {
             var logBuilder = new StringBuilder();
-
             logBuilder.Append("----------------------------------------------------------\n");
-            logBuilder.Append("ANALYZE IMAGE - PEOPLE\n");
+            logBuilder.Append("ANALYZE IMAGE - FULL SCAN\n");
 
             // Summarizes the image content.
             logBuilder.Append("Summary:\n");
             foreach (var caption in imageAnalysis.DenseCaptions.Values)
             {
                 logBuilder.Append($"{caption.Text} with confidence {caption.Confidence}\n");
+            }
+
+            // Image tags and their confidence score
+            logBuilder.Append("Tags:\n");
+            foreach (var tag in imageAnalysis.Tags.Values)
+            {
+                logBuilder.Append($"{tag.Name} {tag.Confidence}\n");
+            }
+
+            // Objects
+            logBuilder.Append("Objects:\n");
+            foreach (var obj in imageAnalysis.Objects.Values)
+            {
+                foreach (var tag in obj.Tags)
+                    logBuilder.Append($"{tag.Name} with confidence {tag.Confidence}");
             }
 
             // People
@@ -56,6 +71,7 @@ namespace Rossy.Analyzers
                 $"{face.BoundingBox.X}, {face.BoundingBox.X + face.BoundingBox.Width}, " +
                 $"{face.BoundingBox.Y}, {face.BoundingBox.Y + face.BoundingBox.Height}\n");
             }
+
             logBuilder.Append("----------------------------------------------------------\n");
 
             return logBuilder.ToString();
@@ -63,47 +79,13 @@ namespace Rossy.Analyzers
 
         public string ProduceSpeechTextEnglish(ImageAnalysisResult imageAnalysis, IReadOnlyList<FaceDetectionResult> detectedFaces)
         {
-            var resultBuilder = new StringBuilder();
-            if (detectedFaces.Count == 0)
-                resultBuilder.Append("There are no people around");
-            else if (detectedFaces.Count == 1)
-            {
-                var face = detectedFaces.First();
-                resultBuilder.Append($"There is one person of age {face.FaceAttributes.Age}.");
-            }
-            else
-            {
-                resultBuilder.Append($"There are {detectedFaces.Count} people around. More in detail: ");
-                foreach (var face in detectedFaces)
-                {
-                    resultBuilder.Append($"a person of age {face.FaceAttributes.Age}, ");
-                }
-                resultBuilder.Append("."); //a little hack
-            }
-            var ssml = Modem.BuildSsmlAsync(resultBuilder.ToString(), "en").Result;
+            var ssml = Modem.BuildSsmlAsync(imageAnalysis.Caption.Text, "en").Result;
             return ssml;
         }
 
         public string ProduceSpeechTextItalian(ImageAnalysisResult imageAnalysis, IReadOnlyList<FaceDetectionResult> detectedFaces)
         {
-            var resultBuilder = new StringBuilder();
-            if (detectedFaces.Count == 0)
-                resultBuilder.Append("Non vedo persone");
-            else if (detectedFaces.Count == 1)
-            {
-                var face = detectedFaces.First();
-                resultBuilder.Append($"C'è una persona che sembra avere un'età di {face.FaceAttributes.Age} anni.");
-            }
-            else
-            {
-                resultBuilder.Append($"Ci sono {detectedFaces.Count} persone. Più precisamente: ");
-                foreach (var face in detectedFaces)
-                {
-                    resultBuilder.Append($"Una persona che sembra avere un'età di {face.FaceAttributes.Age} anni.");
-                }
-                resultBuilder.Append("."); //a little hack
-            }
-            var ssml = Modem.BuildSsmlAsync(resultBuilder.ToString(), "it").Result;
+            var ssml = Modem.BuildSsmlAsync(imageAnalysis.Caption.Text, "it").Result;
             return ssml;
         }
     }

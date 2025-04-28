@@ -6,9 +6,11 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Azure.Storage.Blobs" Version="12.24.0" />
-		<PackageReference Include="Microsoft.Azure.CognitiveServices.Language.LUIS.Runtime" Version="3.0.0" />
 		<PackageReference Include="Azure.AI.TextAnalytics" Version="5.3.0" />
+		<PackageReference Include="Azure.AI.Vision.Face" Version="1.0.0-beta.2" />
+		<PackageReference Include="Azure.AI.Vision.ImageAnalysis" Version="1.0.0" />
+		<PackageReference Include="Azure.Storage.Blobs" Version="12.24.0" />		
+		<PackageReference Include="Microsoft.Azure.CognitiveServices.Language.LUIS.Runtime" Version="3.0.0" />		
 		<PackageReference Include="Microsoft.Azure.CognitiveServices.Vision.ComputerVision" Version="7.0.1" />
 		<PackageReference Include="Microsoft.CognitiveServices.Speech" Version="1.43.0" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />

@@ -1,4 +1,7 @@
-﻿using Microsoft.Azure.CognitiveServices.Vision.ComputerVision.Models;
+﻿using Azure;
+using Azure.AI.Vision;
+using Azure.AI.Vision.Face;
+using Azure.AI.Vision.ImageAnalysis;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -7,9 +10,11 @@ namespace Rossy.Analyzers
 {
     public interface IAnalyzer
     {
-        List<VisualFeatureTypes?> SetupAnalysisFeatures();
-        string ProduceLog(ImageAnalysis imageAnalysis);
-        string ProduceSpeechTextEnglish(ImageAnalysis imageAnalysis);
-        string ProduceSpeechTextItalian(ImageAnalysis imageAnalysis);
+        VisualFeatures SetupImageAnalysisFeatures();
+        IEnumerable<FaceAttributeType> SetupFaceAttributes();
+
+        string ProduceLog(ImageAnalysisResult imageAnalysis, IReadOnlyList<FaceDetectionResult> detectedFaces);
+        string ProduceSpeechTextEnglish(ImageAnalysisResult imageAnalysis, IReadOnlyList<FaceDetectionResult> detectedFaces);
+        string ProduceSpeechTextItalian(ImageAnalysisResult imageAnalysis, IReadOnlyList<FaceDetectionResult> detectedFaces);
     }
 }
